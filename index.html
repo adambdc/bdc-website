@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0A0A0A">
+    <title>Bamboo Digital Consulting — Trusted Data. Trusted AI. Trusted Outcomes.</title>
+    <meta name="description" content="BDC helps organizations build the trust infrastructure their AI strategy requires. AI and data governance, enablement, and transformation — operationalized.">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bamboo Digital Consulting">
+    <meta property="og:image" content="[path to og-image.png — TBD]">
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <a href="index.html" class="nav__logo-link">
+                <!-- Using the absolute required relative path to the provided logo -->
+                <img src="../BDC Existing Logos/BAMBOO Consulting add-10.png" alt="Bamboo Digital Consulting" height="36">
+            </a>
+            <ul class="nav__links">
+                <li><a href="services.html">Services</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="nav__mobile-only"><a href="contact.html" class="btn btn--primary" style="display:none; text-align:center; padding: 12px; margin: 16px;">Book a Call</a></li>
+            </ul>
+            <div class="nav__actions">
+                <a href="contact.html" class="btn btn--primary">Book a Call</a>
+                <button class="nav__mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Section 1: Hero -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="container">
+            <p class="eyebrow">AI + Data Trust Consultancy</p>
+            <h1 class="hero-h1">Trusted data.<br>Trusted AI.<br>Trusted outcomes.</h1>
+            <p class="text-muted body-large" style="max-width: 620px; margin: 0 auto 40px auto;">
+                Most organizations want AI. Few trust what it's built on.
+                BDC closes that gap — with a methodology designed to
+                operationalize trust, not document it.
+            </p>
+            <div class="flex justify-center flex-wrap" style="gap: 16px;">
+                <a href="contact.html" class="btn btn--primary btn--lg">Book a Calibration Call &rarr;</a>
+                <a href="services.html" class="btn btn--ghost btn--lg">Explore Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: The Trust Gap -->
+    <section class="bg-section">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-eyebrow">The Problem</p>
+                <h2 class="section-title">The trust gap is real.</h2>
+                <p class="section-sub text-muted">Your organization is deploying AI on data that wasn't built for it. Governance frameworks sit in SharePoint. The risk isn't theoretical — it's compounding.</p>
+            </div>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(233, 30, 140, 0.1);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <p class="mono-data pink" style="margin-bottom: 8px;">AI on bad data</p>
+                    <h3 style="margin-bottom: 12px;">Models you can't trust</h3>
+                    <p class="text-muted">AI models making decisions on unvalidated, undocumented, ungoverned data. The output is only as trustworthy as what goes in.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(212, 43, 79, 0.1);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--crimson)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <p class="mono-data text-crimson" style="margin-bottom: 8px;">Governance as paperwork</p>
+                    <h3 style="margin-bottom: 12px;">Frameworks that don't run</h3>
+                    <p class="text-muted">Policies exist. Nobody follows them. Governance frameworks are built, presented, and shelved. Six months later, nothing has changed.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(255, 77, 106, 0.1);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </div>
+                    <p class="mono-data text-coral" style="margin-bottom: 8px;">AI risk without oversight</p>
+                    <h3 style="margin-bottom: 12px;">Shadow AI proliferating</h3>
+                    <p class="text-muted">AI projects running outside any review process. No visibility. No accountability. No way to answer your board's questions about AI risk.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Why BDC -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <p class="section-eyebrow">Why BDC</p>
+                <h2 class="section-title">Governance that sticks. AI you can trust.</h2>
+            </div>
+            
+            <div class="grid-3">
+                <div class="diff-card">
+                    <div class="diff-card__number">Days</div>
+                    <h3 style="margin-bottom: 12px;">Not quarters.</h3>
+                    <p class="text-muted">Governing-grade frameworks, RACI matrices, and implementation runbooks delivered in days. AI handles the scale. Expert judgment governs every decision.</p>
+                </div>
+                
+                <div class="diff-card">
+                    <div class="diff-card__number">48+</div>
+                    <h3 style="margin-bottom: 12px;">Operationalized, not documented</h3>
+                    <p class="text-muted">48+ deliverable artifacts designed for adoption. Implementation plans, RACI matrices, runbooks — not policy documents that end up in SharePoint.</p>
+                </div>
+                
+                <div class="diff-card">
+                    <div class="diff-card__number">Fixed</div>
+                    <h3 style="margin-bottom: 12px;">Scope. Price. Timeline.</h3>
+                    <p class="text-muted">Every engagement has a fixed scope, a fixed price, and a defined outcome. No hourly billing. No scope creep surprises. You know exactly what you're buying.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3b: Social Proof -->
+    <section style="padding: 64px 0;">
+        <div class="container" style="max-width: 900px;">
+            <div class="grid-3">
+                <!-- TODO -->
+                <div class="quote-card">
+                    <p class="quote-card__text">"We'd been through two governance initiatives that went nowhere. BDC delivered a working council structure and a complete RACI framework in under two weeks. For the first time, our data owners actually know what they own."</p>
+                    <p class="quote-card__attribution">— VP of Data, Regional Healthcare System</p>
+                </div>
+                
+                <!-- TODO -->
+                <div class="quote-card">
+                    <p class="quote-card__text">"Our board started asking hard questions about AI risk. BDC gave us the answers — and the documentation to back them up. The AI governance framework they built became our standard for every model deployment."</p>
+                    <p class="quote-card__attribution">— Chief Data Officer, Financial Services</p>
+                </div>
+                
+                <!-- TODO -->
+                <div class="quote-card">
+                    <p class="quote-card__text">"I've worked with the big firms. The difference with BDC is you get senior judgment on every deliverable. The work is faster and sharper than anything I've seen from a team ten times the size."</p>
+                    <p class="quote-card__attribution">— Director of Enterprise Data, Mid-Market Technology</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Capabilities -->
+    <section class="bg-section">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-eyebrow">Capabilities</p>
+                <h2 class="section-title">Five ways we build trust.</h2>
+                <p class="section-sub text-muted">From governance foundations to AI enablement to strategic transformation — BDC works across the full spectrum of data and AI trust.</p>
+            </div>
+            
+            <div class="grid-capabilities">
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(123, 47, 190, 0.15);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                    </div>
+                    <p class="mono-data text-purple" style="margin-bottom: 8px;">The Nexus Framework</p>
+                    <h3 style="margin-bottom: 12px;">Unified Governance</h3>
+                    <p class="text-muted">7 domains. 48+ artifacts. 8 diagnostics. The Nexus Framework is governance built to run — not governance built to sit in a document.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(233, 30, 140, 0.1);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
+                    <p class="mono-data text-pink" style="margin-bottom: 8px;">Workshops + Enablement</p>
+                    <h3 style="margin-bottom: 12px;">AI Adoption &amp; Enablement</h3>
+                    <p class="text-muted">Close the gap between AI investment and AI outcomes. Readiness assessments, use case prioritization, and AI literacy programs that change how teams work.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(255, 77, 106, 0.1);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </div>
+                    <p class="mono-data text-coral" style="margin-bottom: 8px;">Tailored + Custom Build</p>
+                    <h3 style="margin-bottom: 12px;">Custom AI Solutions</h3>
+                    <p class="text-muted">Tailored Nexus implementations for your industry and context. Or a full custom AI build delivered with trusted engineering partners. BDC provides the trust layer.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(59, 130, 246, 0.1);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="7" y1="17" x2="17" y2="7"></line>
+                            <polyline points="7 7 17 7 17 17"></polyline>
+                        </svg>
+                    </div>
+                    <p class="mono-data text-blue" style="margin-bottom: 8px;">Strategic Advisory</p>
+                    <h3 style="margin-bottom: 12px;">AI &amp; Digital Transformation</h3>
+                    <p class="text-muted">For senior leaders navigating AI-driven transformation. Roadmaps that connect vision to execution. Governance design that scales with your ambition.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card__icon-container" style="background: rgba(139, 92, 246, 0.1);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--soft-purple)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <p class="mono-data text-soft-purple" style="margin-bottom: 8px;">Artifacts + Tools</p>
+                    <h3 style="margin-bottom: 12px;">Products</h3>
+                    <p class="text-muted">Productized frameworks and AI tools you can deploy today. From the Nexus Artifact Library to Claude Skills built for data and AI practitioners.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Nexus Framework Teaser -->
+    <section>
+        <div class="container grid-2">
+            <div>
+                <p class="section-eyebrow">Our Methodology</p>
+                <h2>The Nexus Framework</h2>
+                <div class="accent-bar"></div>
+                <p class="text-muted" style="margin-bottom: 32px;">A proprietary, modular methodology for operationalizing trust across the data and AI stack. Seven interconnected domains — from strategy through operations — that compound across every engagement.</p>
+                <a href="services.html" class="btn btn--ghost">See the full framework &rarr;</a>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                <div class="domain-pill">
+                    <div class="domain-pill__dot" style="background: var(--d0);"></div>
+                    <span class="domain-pill__name">D0 &middot; Strategy &amp; Value</span>
+                    <span class="domain-pill__count">3 artifacts</span>
+                </div>
+                <div class="domain-pill">
+                    <div class="domain-pill__dot" style="background: var(--d1);"></div>
+                    <span class="domain-pill__name">D1 &middot; Governance Core</span>
+                    <span class="domain-pill__count">8 artifacts</span>
+                </div>
+                <div class="domain-pill">
+                    <div class="domain-pill__dot" style="background: var(--d2);"></div>
+                    <span class="domain-pill__name">D2 &middot; Data Quality</span>
+                    <span class="domain-pill__count">8 artifacts</span>
+                </div>
+                <div class="domain-pill">
+                    <div class="domain-pill__dot" style="background: var(--d3);"></div>
+                    <span class="domain-pill__name">D3 &middot; AI &amp; ML Governance</span>
+                    <span class="domain-pill__count">15 artifacts</span>
+                </div>
+                <div class="domain-pill">
+                    <div class="domain-pill__dot" style="background: var(--d4);"></div>
+                    <span class="domain-pill__name">D4 &middot; Regulatory &amp; Compliance</span>
+                    <span class="domain-pill__count">5 artifacts</span>
+                </div>
+                <div class="domain-pill">
+                    <div class="domain-pill__dot" style="background: var(--d5);"></div>
+                    <span class="domain-pill__name">D5 &middot; Architecture &amp; Enablement</span>
+                    <span class="domain-pill__count">7 artifacts</span>
+                </div>
+                <div class="domain-pill">
+                    <div class="domain-pill__dot" style="background: var(--d6);"></div>
+                    <span class="domain-pill__name">D6 &middot; Operations &amp; Change</span>
+                    <span class="domain-pill__count">6 artifacts</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6: CTA Banner -->
+    <div class="cta-banner">
+        <div class="container cta-banner-content">
+            <p class="section-eyebrow">Get Started</p>
+            <h2>Start with a conversation.</h2>
+            <p class="text-muted" style="margin-bottom: 32px;">The Calibration Call is a 45-minute session with BDC's principal. You walk away with a clear map of your current trust gaps and a prioritized set of first steps.</p>
+            <a href="contact.html" class="btn btn--primary btn--lg">Book a Calibration Call &rarr;</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="../BDC Existing Logos/BAMBOO Consulting add-10.png" alt="Bamboo Digital Consulting" height="32">
+                    <p class="footer-tagline">AI and Data Trust consultancy. Hawaii-based, async-first, outcomes-focused.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="services.html#governance">Unified Governance</a></li>
+                            <li><a href="services.html#enablement">AI Adoption</a></li>
+                            <li><a href="services.html#custom">Custom AI Solutions</a></li>
+                            <li><a href="services.html#transformation">Transformation</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="products.html">Products</a></li>
+                            <li><a href="contact.html">Book a Call</a></li>
+                            <li><a href="mailto:adam@bdcllc.io">adam@bdcllc.io</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="text-subtle" style="font-size: 13px;">&copy; 2026 Bamboo Digital Consulting, LLC. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

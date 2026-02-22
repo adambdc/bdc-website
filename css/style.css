@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
 /* Basic Reset */
 * {
   margin: 0;
@@ -46,7 +48,7 @@
   --d5: #8B5CF6;  /* Architecture & Enablement */
   --d6: #6B7280;  /* Operations & Change */
   
-  /* Tyopgraphy & Spacing */
+  /* Typography & Spacing */
   --font:      'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
@@ -61,8 +63,6 @@
   --radius-lg:  16px;
   --radius-xl:  24px;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 html {
   scroll-behavior: smooth;
@@ -164,6 +164,7 @@ h3 {
 
 .grid { display: grid; }
 .flex { display: flex; }
+.flex-wrap { flex-wrap: wrap; }
 .justify-center { justify-content: center; }
 .items-center { align-items: center; }
 .text-center { text-align: center; }

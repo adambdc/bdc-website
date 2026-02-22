@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       if (toggle) toggle.classList.remove('is-open');
                   }
 
-                  const offset = 72; // Nav height
+                  const offset = 88; // Nav height
                   const elementPosition = targetElement.getBoundingClientRect().top;
                   const offsetPosition = elementPosition + window.pageYOffset - offset;
 

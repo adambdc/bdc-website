@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0A0A0A">
+    <title>AI Governance Savings Calculator — Bamboo Digital Consulting</title>
+    <meta name="description"
+        content="Calculate the cost of ungoverned AI in your organization. See what structured governance saves in dollars, risk reduction, and time.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bamboo Digital Consulting">
+    <meta property="og:image" content="[path to og-image.png, TBD]">
+
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .calc-section { padding: 80px 0; }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+        @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+        .calc-form { display: flex; flex-direction: column; gap: 28px; }
+        .calc-field { display: flex; flex-direction: column; gap: 8px; }
+        .calc-field label {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .calc-field .field-desc {
+            font-size: 13px;
+            color: var(--text-subtle);
+            margin-bottom: 4px;
+        }
+        .calc-field input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.08);
+            outline: none;
+        }
+        .calc-field input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--purple);
+            cursor: pointer;
+            border: 2px solid var(--bg);
+            box-shadow: 0 0 8px rgba(123, 47, 190, 0.4);
+        }
+        .calc-field input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--purple);
+            cursor: pointer;
+            border: 2px solid var(--bg);
+            box-shadow: 0 0 8px rgba(123, 47, 190, 0.4);
+        }
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-subtle);
+            margin-top: 4px;
+        }
+        .range-value {
+            font-family: var(--font-mono);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .results-panel {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 40px;
+            position: sticky;
+            top: 100px;
+        }
+        .results-panel h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .result-row:last-of-type { border-bottom: none; }
+        .result-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .result-value {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .result-value.text-pink { color: var(--pink); }
+        .result-value.text-purple { color: var(--purple); }
+        .result-value.text-coral { color: var(--coral); }
+
+        .result-total {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid rgba(123, 47, 190, 0.3);
+        }
+        .result-total .result-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .result-total .result-value {
+            font-size: 28px;
+            color: var(--pink);
+        }
+
+        .email-gate {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .email-gate p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .email-gate-form {
+            display: flex;
+            gap: 8px;
+        }
+        .email-gate-form input[type="email"] {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+        }
+        .email-gate-form input[type="email"]::placeholder { color: var(--text-subtle); }
+        .email-gate-form input[type="email"]:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+
+        .blurred-results .result-value {
+            filter: blur(6px);
+            user-select: none;
+        }
+        .blurred-results .result-total .result-value {
+            filter: blur(8px);
+        }
+        .results-unlocked .result-value {
+            filter: none;
+            user-select: auto;
+        }
+
+        .unlock-message {
+            text-align: center;
+            padding: 16px;
+            background: rgba(123, 47, 190, 0.1);
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--purple);
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="container">
+            <a href="index.html" class="nav__logo-link">
+                <img src="assets/logo.png" alt="Bamboo Digital Consulting" height="36">
+            </a>
+            <ul class="nav__links">
+                <li><a href="services.html">Services</a></li>
+                <li><a href="products.html">TEMPO</a></li>
+                <li><a href="calculator.html">Calculator</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="nav__mobile-only"><a href="contact.html" class="btn btn--primary"
+                        style="display:none; text-align:center; padding: 12px; margin: 16px;">Book a Call</a></li>
+            </ul>
+            <div class="nav__actions">
+                <a href="contact.html" class="btn btn--primary">Book a Call</a>
+                <button class="nav__mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="left-container">
+            <div class="left-container-720">
+                <p class="eyebrow">Free Tool</p>
+                <h1>AI Governance<br>Savings Calculator</h1>
+                <p class="text-muted body-large">
+                    Calculate the annual cost of ungoverned AI in your organization. See what structured governance saves in risk reduction, compliance efficiency, and operational overhead.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator -->
+    <section class="calc-section">
+        <div class="container">
+            <div class="calc-grid">
+                <!-- Inputs -->
+                <div class="calc-form">
+                    <div class="calc-field">
+                        <label for="headcount">Governance headcount</label>
+                        <p class="field-desc">People currently spending time on AI/data governance activities</p>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <input type="range" id="headcount" min="1" max="50" value="5">
+                            <span class="range-value" id="headcount-val">5</span>
+                        </div>
+                        <div class="range-labels"><span>1</span><span>50</span></div>
+                    </div>
+
+                    <div class="calc-field">
+                        <label for="tools">Ungoverned AI tools</label>
+                        <p class="field-desc">Estimated number of AI tools in use without formal governance</p>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <input type="range" id="tools" min="1" max="100" value="15">
+                            <span class="range-value" id="tools-val">15</span>
+                        </div>
+                        <div class="range-labels"><span>1</span><span>100</span></div>
+                    </div>
+
+                    <div class="calc-field">
+                        <label for="regulatory">Regulatory exposure level</label>
+                        <p class="field-desc">How many regulatory frameworks apply to your AI usage</p>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <input type="range" id="regulatory" min="1" max="5" value="2" step="1">
+                            <span class="range-value" id="regulatory-val">2</span>
+                        </div>
+                        <div class="range-labels"><span>1 (Low)</span><span>5 (Critical)</span></div>
+                    </div>
+
+                    <div class="calc-field">
+                        <label for="dq-cost">Data quality incident cost (annual est.)</label>
+                        <p class="field-desc">Estimated annual cost of data quality issues: rework, errors, bad decisions</p>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <input type="range" id="dq-cost" min="50000" max="5000000" value="500000" step="50000">
+                            <span class="range-value" id="dq-cost-val">$500K</span>
+                        </div>
+                        <div class="range-labels"><span>$50K</span><span>$5M</span></div>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="results-panel">
+                    <h3>Your Governance Savings</h3>
+
+                    <div id="results-body" class="blurred-results">
+                        <div class="result-row">
+                            <span class="result-label">Compliance efficiency gain</span>
+                            <span class="result-value text-pink" id="res-compliance">$0</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Shadow AI risk reduction</span>
+                            <span class="result-value text-purple" id="res-shadow">$0</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Data quality improvement</span>
+                            <span class="result-value text-coral" id="res-dq">$0</span>
+                        </div>
+                        <div class="result-row result-total">
+                            <span class="result-label">Estimated annual savings</span>
+                            <span class="result-value" id="res-total">$0</span>
+                        </div>
+                    </div>
+
+                    <div class="email-gate" id="email-gate">
+                        <p>Enter your email to unlock your full savings report.</p>
+                        <form class="email-gate-form" name="calculator" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="calc-form">
+                            <input type="hidden" name="form-name" value="calculator">
+                            <input type="hidden" name="bot-field">
+                            <input type="hidden" name="headcount" id="form-headcount">
+                            <input type="hidden" name="tools" id="form-tools">
+                            <input type="hidden" name="regulatory" id="form-regulatory">
+                            <input type="hidden" name="dq-cost" id="form-dq-cost">
+                            <input type="hidden" name="total-savings" id="form-total">
+                            <input type="email" name="email" placeholder="your@email.com" required>
+                            <button type="submit" class="btn btn--primary">Unlock</button>
+                        </form>
+                    </div>
+
+                    <div class="unlock-message" id="unlock-message">
+                        Results unlocked. Book a Calibration Call to discuss your findings.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Note -->
+    <section class="bg-section" style="padding: 48px 0;">
+        <div class="container" style="max-width: 720px;">
+            <p class="section-eyebrow">Methodology</p>
+            <h3 style="margin-bottom: 16px;">How we calculate savings</h3>
+            <p class="text-muted" style="font-size: 14px; margin-bottom: 16px;">This calculator uses conservative multipliers based on industry benchmarks from Gartner, Forrester, and BDC's client engagements. Compliance efficiency is modeled as a percentage of governance labor cost recovered through TEMPO automation. Shadow AI risk is calculated per ungoverned tool using average incident cost data. Data quality improvement uses the standard 15-25% reduction benchmark for governed environments.</p>
+            <p class="text-muted" style="font-size: 14px;">These are directional estimates, not guarantees. Your actual savings depend on organizational complexity, regulatory environment, and current governance maturity. The Calibration Call produces a more precise assessment.</p>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-banner">
+        <div class="container cta-banner-content">
+            <p class="section-eyebrow">Next Step</p>
+            <h2>Turn the estimate into a plan.</h2>
+            <p class="text-muted" style="margin-bottom: 32px;">The Calibration Call takes these numbers and maps them to specific TEMPO engagements. 45 minutes. You walk away with a prioritized action plan.</p>
+            <a href="contact.html" class="btn btn--primary btn--lg">Book a Calibration Call &rarr;</a>
+        </div>
+    </div>
+
+    <div class="footer-email-strip">
+        <div class="container">
+            <div class="footer-email-strip__copy">
+                <p>Stay in the loop.</p>
+                <p>New products, resources, and insights. No noise.</p>
+            </div>
+            <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="newsletter">
+                <input type="hidden" name="bot-field">
+                <input type="email" name="email" placeholder="your@email.com" required>
+                <button type="submit" class="btn btn--primary">Subscribe</button>
+            </form>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="assets/logo.png" alt="Bamboo Digital Consulting" height="32">
+                    <p class="footer-tagline">AI and Data Trust consultancy. Senior-led. Fixed scope. Clear outcomes.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="services.html#agentic-architecture">Agentic Architecture</a></li>
+                            <li><a href="services.html#ai-readiness">AI Readiness</a></li>
+                            <li><a href="services.html#ai-enablement">AI Enablement</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="products.html">TEMPO Framework</a></li>
+                            <li><a href="calculator.html">Savings Calculator</a></li>
+                            <li><a href="contact.html">Book a Call</a></li>
+                            <li><a href="mailto:info@bdcllc.io">info@bdcllc.io</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="text-subtle" style="font-size: 13px;">&copy; 2026 Bamboo Digital Consulting, LLC. All rights
+                    reserved.</p>
+                <div class="footer-legal">
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+    (function() {
+        const headcount = document.getElementById('headcount');
+        const tools = document.getElementById('tools');
+        const regulatory = document.getElementById('regulatory');
+        const dqCost = document.getElementById('dq-cost');
+
+        const headcountVal = document.getElementById('headcount-val');
+        const toolsVal = document.getElementById('tools-val');
+        const regulatoryVal = document.getElementById('regulatory-val');
+        const dqCostVal = document.getElementById('dq-cost-val');
+
+        const resCompliance = document.getElementById('res-compliance');
+        const resShadow = document.getElementById('res-shadow');
+        const resDq = document.getElementById('res-dq');
+        const resTotal = document.getElementById('res-total');
+
+        const resultsBody = document.getElementById('results-body');
+        const emailGate = document.getElementById('email-gate');
+        const unlockMessage = document.getElementById('unlock-message');
+        const calcForm = document.getElementById('calc-form');
+
+        function formatCurrency(n) {
+            if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+            if (n >= 1000) return '$' + Math.round(n / 1000) + 'K';
+            return '$' + Math.round(n);
+        }
+
+        function formatDqDisplay(n) {
+            if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+            if (n >= 1000) return '$' + Math.round(n / 1000) + 'K';
+            return '$' + n;
+        }
+
+        function calculate() {
+            var h = parseInt(headcount.value);
+            var t = parseInt(tools.value);
+            var r = parseInt(regulatory.value);
+            var d = parseInt(dqCost.value);
+
+            headcountVal.textContent = h;
+            toolsVal.textContent = t;
+            regulatoryVal.textContent = r;
+            dqCostVal.textContent = formatDqDisplay(d);
+
+            // Compliance efficiency: 30% of governance labor saved through TEMPO automation
+            // Average fully-loaded governance cost: $140K/person/year
+            var complianceSavings = Math.round(h * 140000 * 0.30 * (1 + (r - 1) * 0.1));
+
+            // Shadow AI risk: $25K-$75K per ungoverned tool (risk-adjusted)
+            // Scale by regulatory exposure
+            var perToolRisk = 25000 + (r * 10000);
+            var shadowSavings = Math.round(t * perToolRisk * 0.6);
+
+            // Data quality: 20% improvement in governed environment
+            var dqSavings = Math.round(d * 0.20);
+
+            var total = complianceSavings + shadowSavings + dqSavings;
+
+            resCompliance.textContent = formatCurrency(complianceSavings);
+            resShadow.textContent = formatCurrency(shadowSavings);
+            resDq.textContent = formatCurrency(dqSavings);
+            resTotal.textContent = formatCurrency(total);
+
+            // Update hidden form fields
+            document.getElementById('form-headcount').value = h;
+            document.getElementById('form-tools').value = t;
+            document.getElementById('form-regulatory').value = r;
+            document.getElementById('form-dq-cost').value = d;
+            document.getElementById('form-total').value = total;
+        }
+
+        headcount.addEventListener('input', calculate);
+        tools.addEventListener('input', calculate);
+        regulatory.addEventListener('input', calculate);
+        dqCost.addEventListener('input', calculate);
+
+        // Email gate unlock
+        calcForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Submit form data to Netlify
+            var formData = new FormData(calcForm);
+            fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(formData).toString()
+            }).then(function() {
+                resultsBody.classList.remove('blurred-results');
+                resultsBody.classList.add('results-unlocked');
+                emailGate.style.display = 'none';
+                unlockMessage.style.display = 'block';
+            }).catch(function() {
+                // Unlock anyway on error (local dev, etc.)
+                resultsBody.classList.remove('blurred-results');
+                resultsBody.classList.add('results-unlocked');
+                emailGate.style.display = 'none';
+                unlockMessage.style.display = 'block';
+            });
+        });
+
+        // Initial calculation
+        calculate();
+    })();
+    </script>
+</body>
+
+</html>

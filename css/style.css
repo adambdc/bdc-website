@@ -561,6 +561,8 @@ section {
     margin: 0 auto;
     padding: var(--container);
     text-align: left;
+    position: relative;
+    z-index: 1;
 }
 .left-container-720 {
     max-width: 768px; /* 720 + container padding */

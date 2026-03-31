@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0A0A0A">
+    <title>AI and Data Trust Maturity Assessment — Preview</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .assess-wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+        /* Progress */
+        .progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-bottom: 40px; }
+        .progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; background: linear-gradient(90deg, var(--pink), var(--purple)); }
+        .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+
+        /* Dimension badge */
+        .dim-badge { display: inline-block; padding: 4px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 24px; }
+        .dim-adopt { background: rgba(233,30,140,0.12); color: var(--pink); }
+        .dim-govern { background: rgba(123,47,190,0.12); color: var(--purple); }
+        .dim-orchestrate { background: rgba(255,77,106,0.12); color: var(--coral); }
+        .dim-adapt { background: rgba(59,130,246,0.12); color: var(--blue); }
+
+        /* Question */
+        .q-text { font-size: 22px; font-weight: 600; line-height: 1.4; margin-bottom: 32px; color: var(--text); }
+
+        /* Options */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option {
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .option:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+        .option.selected { background: rgba(123,47,190,0.1); border-color: var(--purple); }
+        .option-marker {
+            width: 22px; height: 22px; min-width: 22px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            margin-top: 2px;
+            transition: all 0.2s ease;
+        }
+        .option.selected .option-marker { border-color: var(--purple); background: var(--purple); }
+        .option.selected .option-marker::after { content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; }
+        .option-text { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+        .option.selected .option-text { color: var(--text); }
+        .option-stage { font-family: var(--font-mono); font-size: 10px; color: var(--text-subtle); margin-top: 4px; display: none; }
+
+        /* Nav buttons */
+        .q-nav { display: flex; justify-content: space-between; margin-top: 40px; }
+        .q-nav .btn { min-width: 120px; }
+        .btn--disabled { opacity: 0.3; pointer-events: none; }
+
+        /* Results */
+        .results-section { display: none; padding: 80px 0; }
+        .results-section.active { display: block; }
+        .assessment-section { padding: 80px 0; }
+        .assessment-section.hidden { display: none; }
+
+        .radar-wrap { display: flex; justify-content: center; margin-bottom: 48px; }
+        .stage-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        .stage-badge.metronome { background: rgba(233,30,140,0.15); color: var(--pink); }
+        .stage-badge.score { background: rgba(123,47,190,0.15); color: var(--purple); }
+        .stage-badge.ensemble { background: rgba(255,77,106,0.15); color: var(--coral); }
+        .stage-badge.symphony { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+        .dim-result { padding: 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; }
+        .dim-result h4 { margin-bottom: 8px; }
+        .dim-score { font-family: var(--font-mono); font-size: 28px; font-weight: 700; }
+        .dim-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; margin: 12px 0; }
+        .dim-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+
+        .blurred .radar-wrap, .blurred .stage-badge, .blurred .dim-score, .blurred .dim-bar-fill, .blurred .stage-desc, .blurred .dim-rec { filter: blur(8px); user-select: none; }
+        .unlocked .radar-wrap, .unlocked .stage-badge, .unlocked .dim-score, .unlocked .dim-bar-fill, .unlocked .stage-desc, .unlocked .dim-rec { filter: none; user-select: auto; }
+
+        .gate-form { max-width: 480px; margin: 32px auto 0; text-align: center; }
+        .gate-form p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+        .gate-form form { display: flex; gap: 8px; }
+        .gate-form input[type="email"] {
+            flex: 1; padding: 12px 16px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px; color: var(--text); font-size: 14px;
+        }
+        .gate-form input[type="email"]::placeholder { color: var(--text-subtle); }
+        .gate-form input[type="email"]:focus { outline: none; border-color: var(--purple); }
+
+        .results-cta { text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .results-cta p { color: var(--text-muted); font-size: 15px; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <a href="index.html" class="nav__logo-link">
+                <img src="assets/logo.png" alt="Bamboo Digital Consulting" height="36">
+            </a>
+            <ul class="nav__links">
+                <li><a href="services.html">Services</a></li>
+                <li><a href="products.html">TEMPO</a></li>
+                <li><a href="insights.html">Insights</a></li>
+                <li><a href="assessment.html">Assessment</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav__actions">
+                <a href="contact.html" class="btn btn--primary">Book a Call</a>
+                <button class="nav__mobile-toggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="page-header">
+        <div class="left-container">
+            <div class="left-container-720">
+                <p class="eyebrow">Free Assessment</p>
+                <h1>AI and Data Trust<br>Maturity Assessment</h1>
+                <p class="text-muted body-large">20 questions. 5 minutes. A clear picture of where your governance stands across TEMPO's four engines.</p>
+                <div style="margin-top: 24px;">
+                    <button class="btn btn--primary" id="start-btn">Start Assessment &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Assessment -->
+    <section class="assessment-section" id="assess-section" style="display:none;">
+        <div class="assess-wrap">
+            <div class="progress-label">
+                <span id="dim-label">Adopt</span>
+                <span id="q-counter">Question 1 of 20</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress" style="width:5%"></div></div>
+
+            <div id="dim-badge" class="dim-badge dim-adopt">TEMPO: Adopt</div>
+            <div class="q-text" id="q-text"></div>
+            <div class="options" id="options"></div>
+
+            <div class="q-nav">
+                <button class="btn btn--ghost" id="prev-btn">&larr; Back</button>
+                <button class="btn btn--primary btn--disabled" id="next-btn">Next &rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results -->
+    <section class="results-section" id="results-section">
+        <div class="assess-wrap" id="results-body" class="blurred">
+            <div style="text-align: center; margin-bottom: 48px;">
+                <p class="eyebrow" style="margin-bottom: 16px;">Your Trust Profile</p>
+                <div class="stage-badge score" id="stage-badge">Score</div>
+                <h2 id="stage-title" style="margin-top: 12px;">Writing the Rules</h2>
+                <p class="text-muted stage-desc" id="stage-desc" style="max-width: 560px; margin: 16px auto 0;"></p>
+            </div>
+
+            <div class="radar-wrap">
+                <canvas id="radar" width="420" height="420"></canvas>
+            </div>
+
+            <div class="grid-2" style="gap: 16px; margin-bottom: 32px;">
+                <div class="dim-result" id="res-adopt">
+                    <p class="mono-data text-pink" style="font-size: 11px; margin-bottom: 4px;">Adopt</p>
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                        <h4>AI Adoption Maturity</h4>
+                        <span class="dim-score text-pink" id="score-adopt">0.0</span>
+                    </div>
+                    <div class="dim-bar"><div class="dim-bar-fill" id="bar-adopt" style="width:0%; background: var(--pink);"></div></div>
+                    <p class="text-muted dim-rec" style="font-size: 13px;" id="rec-adopt"></p>
+                </div>
+                <div class="dim-result" id="res-govern">
+                    <p class="mono-data text-purple" style="font-size: 11px; margin-bottom: 4px;">Govern</p>
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                        <h4>Governance Structure</h4>
+                        <span class="dim-score text-purple" id="score-govern">0.0</span>
+                    </div>
+                    <div class="dim-bar"><div class="dim-bar-fill" id="bar-govern" style="width:0%; background: var(--purple);"></div></div>
+                    <p class="text-muted dim-rec" style="font-size: 13px;" id="rec-govern"></p>
+                </div>
+                <div class="dim-result" id="res-orchestrate">
+                    <p class="mono-data text-coral" style="font-size: 11px; margin-bottom: 4px;">Orchestrate</p>
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                        <h4>Organizational Enablement</h4>
+                        <span class="dim-score text-coral" id="score-orchestrate">0.0</span>
+                    </div>
+                    <div class="dim-bar"><div class="dim-bar-fill" id="bar-orchestrate" style="width:0%; background: var(--coral);"></div></div>
+                    <p class="text-muted dim-rec" style="font-size: 13px;" id="rec-orchestrate"></p>
+                </div>
+                <div class="dim-result" id="res-adapt">
+                    <p class="mono-data text-blue" style="font-size: 11px; margin-bottom: 4px;">Adapt</p>
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                        <h4>Continuous Improvement</h4>
+                        <span class="dim-score text-blue" id="score-adapt">0.0</span>
+                    </div>
+                    <div class="dim-bar"><div class="dim-bar-fill" id="bar-adapt" style="width:0%; background: var(--blue);"></div></div>
+                    <p class="text-muted dim-rec" style="font-size: 13px;" id="rec-adapt"></p>
+                </div>
+            </div>
+
+            <div class="gate-form" id="gate-form">
+                <p>Enter your email to unlock your full Trust Profile and download a PDF report.</p>
+                <form id="email-form">
+                    <input type="email" placeholder="your@email.com" required>
+                    <button type="submit" class="btn btn--primary">Unlock</button>
+                </form>
+            </div>
+
+            <div class="results-cta" id="results-cta" style="display:none;">
+                <p>Governance is the engine. Trust is the destination. Here's your map.</p>
+                <a href="contact.html" class="btn btn--primary btn--lg">Book a Calibration Call &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    (function() {
+        var questions = [
+            // ADOPT (5)
+            { dim: 'adopt', text: 'How does your organization evaluate and approve new AI tools?',
+              opts: ['No formal process. Teams adopt AI tools independently.',
+                     'There is a review process, but it is not consistently followed.',
+                     'All AI tools go through a defined evaluation and approval workflow.',
+                     'AI tool evaluation is automated with risk-tiered approval paths that adapt as the technology landscape changes.']},
+            { dim: 'adopt', text: 'How well does your organization understand its current AI usage?',
+              opts: ['We have no inventory of AI tools in use across the organization.',
+                     'We have a partial inventory, but shadow AI is likely widespread.',
+                     'We maintain a comprehensive AI tool inventory with regular audits.',
+                     'AI usage is tracked continuously with automated discovery and classification.']},
+            { dim: 'adopt', text: 'How does your organization assess data readiness before deploying AI?',
+              opts: ['Data readiness is not evaluated. AI projects use whatever data is available.',
+                     'Some projects assess data quality, but there is no standard process.',
+                     'Every AI initiative includes a formal data readiness evaluation.',
+                     'Data readiness is continuously monitored, with automated quality gates for AI pipelines.']},
+            { dim: 'adopt', text: 'How does your organization prioritize AI use cases?',
+              opts: ['AI projects are driven by individual enthusiasm, not organizational strategy.',
+                     'Leadership has identified priority areas, but selection is informal.',
+                     'We use a structured framework to evaluate and rank AI opportunities by value and risk.',
+                     'Use case evaluation is ongoing, with a portfolio view that balances innovation, risk, and business impact.']},
+            { dim: 'adopt', text: 'How does your organization handle AI adoption strategy?',
+              opts: ['There is no AI strategy. Adoption happens organically.',
+                     'An AI strategy exists but is not connected to governance or data quality.',
+                     'AI strategy is documented, funded, and aligned with governance frameworks.',
+                     'AI strategy is a living document that adapts quarterly based on technology changes and governance maturity.']},
+
+            // GOVERN (5)
+            { dim: 'govern', text: 'How does your organization manage data ownership and accountability?',
+              opts: ['Data ownership is unclear. No one is formally accountable.',
+                     'Ownership is assigned for some critical datasets, but gaps remain.',
+                     'All major datasets have documented owners with defined responsibilities and review cadences.',
+                     'Ownership is operationalized with automated accountability tracking, regular audits, and escalation protocols.']},
+            { dim: 'govern', text: 'What is the state of your AI risk and ethics framework?',
+              opts: ['We have no formal AI risk or ethics framework.',
+                     'Policies exist on paper but are not consistently applied.',
+                     'Risk and ethics frameworks are operational, with defined review processes and incident response.',
+                     'Frameworks are continuously updated based on new risks, regulatory changes, and model performance data.']},
+            { dim: 'govern', text: 'How mature is your data quality management?',
+              opts: ['Data quality is not measured or managed systematically.',
+                     'We measure data quality for some critical systems, but lack organization-wide standards.',
+                     'Data quality is measured across the enterprise with defined standards, remediation workflows, and SLAs.',
+                     'Data quality is continuously monitored with automated detection, root cause analysis, and feedback loops to source systems.']},
+            { dim: 'govern', text: 'How does your governance council or oversight body operate?',
+              opts: ['We do not have a governance council or oversight body.',
+                     'A council exists but meets irregularly and has limited decision-making authority.',
+                     'The council meets on a regular cadence with clear RACI, decision rights, and escalation paths.',
+                     'Multiple coordinated governance bodies operate with automated reporting, cross-functional representation, and direct authority over AI and data decisions.']},
+            { dim: 'govern', text: 'How does your organization manage regulatory compliance for AI and data?',
+              opts: ['We address compliance reactively when regulators or auditors raise issues.',
+                     'We track major regulations but lack a systematic mapping to our governance practices.',
+                     'Regulatory requirements are mapped to specific governance controls with documented compliance evidence.',
+                     'Compliance is embedded in governance operations with automated regulatory change monitoring and proactive framework updates.']},
+
+            // ORCHESTRATE (5)
+            { dim: 'orchestrate', text: 'How widely is AI governance understood across your organization?',
+              opts: ['Governance is handled by a single team. Most of the organization is unaware.',
+                     'Leadership is aware of governance initiatives, but frontline teams are not engaged.',
+                     'Governance training is delivered role-by-role, and teams actively participate in governance processes.',
+                     'Governance is embedded in how every team works. Champions exist across functions, and adoption metrics are tracked.']},
+            { dim: 'orchestrate', text: 'How does your organization manage change when implementing governance?',
+              opts: ['Governance is mandated top-down with no change management support.',
+                     'Some communication and training accompany governance rollouts, but adoption is inconsistent.',
+                     'Change management is a defined workstream with stakeholder engagement, training, and feedback loops.',
+                     'Governance adoption is continuously measured, with targeted interventions for teams that fall behind and recognition for those that lead.']},
+            { dim: 'orchestrate', text: 'How clear are roles and responsibilities for AI and data across your organization?',
+              opts: ['Roles related to AI and data governance are undefined or informal.',
+                     'Some roles are defined, but overlaps and gaps create confusion.',
+                     'All AI and data roles have documented responsibilities, reporting lines, and accountability structures.',
+                     'Role clarity is maintained dynamically as the organization evolves, with regular reviews and realignment.']},
+            { dim: 'orchestrate', text: 'How does your organization measure AI and data governance adoption?',
+              opts: ['We do not measure governance adoption.',
+                     'We track basic metrics like policy acknowledgment or training completion.',
+                     'Adoption is measured through behavioral indicators: process compliance, decision quality, and incident reduction.',
+                     'Comprehensive adoption dashboards track leading and lagging indicators across all governance domains, with targets and trend analysis.']},
+            { dim: 'orchestrate', text: 'Does your organization have governance champions or ambassadors?',
+              opts: ['No. Governance is the responsibility of a central team only.',
+                     'A few informal advocates exist, but they have no formal role or support.',
+                     'Governance champions are identified, trained, and supported across major business units.',
+                     'A champion network operates as a self-sustaining community with peer mentoring, regular forums, and direct input into governance evolution.']},
+
+            // ADAPT (5)
+            { dim: 'adapt', text: 'How does your governance respond when regulations or AI capabilities change?',
+              opts: ['We react when regulators or auditors raise issues.',
+                     'We review governance periodically (annually or less) and update as needed.',
+                     'We monitor the regulatory and technology landscape actively and update frameworks quarterly.',
+                     'Governance evolves continuously. Regulatory and technology changes are absorbed through established update mechanisms.']},
+            { dim: 'adapt', text: 'How frequently does your organization review and update its governance frameworks?',
+              opts: ['Governance frameworks are not reviewed after initial creation.',
+                     'Reviews happen when a problem occurs or an audit requires it.',
+                     'Scheduled reviews occur at least quarterly with documented change logs.',
+                     'Frameworks are versioned and updated continuously, with automated triggers for review based on external and internal signals.']},
+            { dim: 'adapt', text: 'How does your organization scan for emerging AI risks and regulatory changes?',
+              opts: ['We do not actively monitor for new risks or regulatory developments.',
+                     'Key personnel follow industry news informally.',
+                     'A defined process exists for monitoring regulatory and technology developments with regular briefings to leadership.',
+                     'Automated horizon scanning feeds into governance processes, with pre-mapped response playbooks for anticipated regulatory changes.']},
+            { dim: 'adapt', text: 'How does your governance incorporate lessons learned from incidents or failures?',
+              opts: ['Incidents are handled individually with no systematic learning process.',
+                     'Post-incident reviews happen occasionally, but findings are not consistently incorporated.',
+                     'A formal lessons-learned process feeds findings into governance framework updates.',
+                     'Continuous improvement is automated: incident patterns trigger governance reviews, and framework updates are validated against historical failure data.']},
+            { dim: 'adapt', text: 'How resilient is your governance to organizational change (M&A, restructuring, leadership turnover)?',
+              opts: ['Governance depends on specific individuals and breaks when they leave or the organization changes.',
+                     'Core documentation exists, but governance effectiveness drops significantly during transitions.',
+                     'Governance is institutionalized enough to survive leadership changes with minimal disruption.',
+                     'Governance is embedded in systems and processes, not people. Organizational changes trigger structured governance transition protocols.']}
+        ];
+
+        var dimNames = { adopt: 'Adopt', govern: 'Govern', orchestrate: 'Orchestrate', adapt: 'Adapt' };
+        var dimClasses = { adopt: 'dim-adopt', govern: 'dim-govern', orchestrate: 'dim-orchestrate', adapt: 'dim-adapt' };
+        var dimLabels = { adopt: 'TEMPO: Adopt', govern: 'TEMPO: Govern', orchestrate: 'TEMPO: Orchestrate', adapt: 'TEMPO: Adapt' };
+        var dimColors = { adopt: '#E91E8C', govern: '#7B2FBE', orchestrate: '#FF4D6A', adapt: '#3B82F6' };
+
+        var answers = new Array(questions.length).fill(-1);
+        var currentQ = 0;
+
+        var startBtn = document.getElementById('start-btn');
+        var assessSection = document.getElementById('assess-section');
+        var pageHeader = document.querySelector('.page-header');
+        var qText = document.getElementById('q-text');
+        var optionsEl = document.getElementById('options');
+        var progress = document.getElementById('progress');
+        var dimLabel = document.getElementById('dim-label');
+        var qCounter = document.getElementById('q-counter');
+        var dimBadge = document.getElementById('dim-badge');
+        var prevBtn = document.getElementById('prev-btn');
+        var nextBtn = document.getElementById('next-btn');
+        var resultsSection = document.getElementById('results-section');
+
+        startBtn.addEventListener('click', function() {
+            pageHeader.style.display = 'none';
+            assessSection.style.display = 'block';
+            renderQ();
+        });
+
+        function renderQ() {
+            var q = questions[currentQ];
+            qText.textContent = q.text;
+            dimLabel.textContent = dimNames[q.dim];
+            qCounter.textContent = 'Question ' + (currentQ + 1) + ' of ' + questions.length;
+            progress.style.width = ((currentQ + 1) / questions.length * 100) + '%';
+            dimBadge.className = 'dim-badge ' + dimClasses[q.dim];
+            dimBadge.textContent = dimLabels[q.dim];
+
+            optionsEl.innerHTML = '';
+            q.opts.forEach(function(opt, i) {
+                var div = document.createElement('div');
+                div.className = 'option' + (answers[currentQ] === i ? ' selected' : '');
+                div.innerHTML = '<div class="option-marker"></div><div><div class="option-text">' + opt + '</div></div>';
+                div.addEventListener('click', function() {
+                    answers[currentQ] = i;
+                    renderQ();
+                });
+                optionsEl.appendChild(div);
+            });
+
+            prevBtn.className = currentQ === 0 ? 'btn btn--ghost btn--disabled' : 'btn btn--ghost';
+            if (currentQ === questions.length - 1) {
+                nextBtn.textContent = 'See Results';
+                nextBtn.className = answers[currentQ] >= 0 ? 'btn btn--primary' : 'btn btn--primary btn--disabled';
+            } else {
+                nextBtn.textContent = 'Next \u2192';
+                nextBtn.className = answers[currentQ] >= 0 ? 'btn btn--primary' : 'btn btn--primary btn--disabled';
+            }
+        }
+
+        prevBtn.addEventListener('click', function() {
+            if (currentQ > 0) { currentQ--; renderQ(); }
+        });
+
+        nextBtn.addEventListener('click', function() {
+            if (answers[currentQ] < 0) return;
+            if (currentQ < questions.length - 1) { currentQ++; renderQ(); }
+            else { showResults(); }
+        });
+
+        function calcScores() {
+            var dims = { adopt: [], govern: [], orchestrate: [], adapt: [] };
+            questions.forEach(function(q, i) { dims[q.dim].push(answers[i] + 1); });
+            var scores = {};
+            for (var d in dims) { scores[d] = dims[d].reduce(function(a,b){return a+b;},0) / dims[d].length; }
+            scores.overall = (scores.adopt + scores.govern + scores.orchestrate + scores.adapt) / 4;
+            return scores;
+        }
+
+        function getStage(score) {
+            if (score <= 1.7) return { name: 'Metronome', label: 'Establishing the Beat', cls: 'metronome' };
+            if (score <= 2.5) return { name: 'Score', label: 'Writing the Rules', cls: 'score' };
+            if (score <= 3.3) return { name: 'Ensemble', label: 'Playing Together', cls: 'ensemble' };
+            return { name: 'Symphony', label: 'Full Orchestration', cls: 'symphony' };
+        }
+
+        function drawRadar(scores) {
+            var canvas = document.getElementById('radar');
+            var ctx = canvas.getContext('2d');
+            var w = canvas.width, h = canvas.height;
+            var cx = w/2, cy = h/2, r = 160;
+            var dims = ['adopt', 'govern', 'orchestrate', 'adapt'];
+            var labels = ['Adopt', 'Govern', 'Orchestrate', 'Adapt'];
+            var colors = [dimColors.adopt, dimColors.govern, dimColors.orchestrate, dimColors.adapt];
+            var angles = dims.map(function(_,i){ return -Math.PI/2 + (2*Math.PI/4)*i; });
+
+            ctx.clearRect(0,0,w,h);
+
+            // Grid rings
+            for (var ring = 1; ring <= 4; ring++) {
+                ctx.beginPath();
+                var rr = r * ring/4;
+                for (var j = 0; j <= 4; j++) {
+                    var a = -Math.PI/2 + (2*Math.PI/4)*j;
+                    var x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+                    j === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+                }
+                ctx.closePath();
+                ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            // Axis lines
+            for (var k = 0; k < 4; k++) {
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + r * Math.cos(angles[k]), cy + r * Math.sin(angles[k]));
+                ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                ctx.stroke();
+            }
+
+            // Data polygon
+            ctx.beginPath();
+            for (var m = 0; m < 4; m++) {
+                var val = scores[dims[m]] / 4;
+                var px = cx + r * val * Math.cos(angles[m]);
+                var py = cy + r * val * Math.sin(angles[m]);
+                m === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(123,47,190,0.15)';
+            ctx.fill();
+            ctx.strokeStyle = '#7B2FBE';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Data points
+            for (var n = 0; n < 4; n++) {
+                var v = scores[dims[n]] / 4;
+                var dpx = cx + r * v * Math.cos(angles[n]);
+                var dpy = cy + r * v * Math.sin(angles[n]);
+                ctx.beginPath();
+                ctx.arc(dpx, dpy, 5, 0, 2*Math.PI);
+                ctx.fillStyle = colors[n];
+                ctx.fill();
+                ctx.strokeStyle = '#0A0A0A';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Labels
+            ctx.font = '13px "JetBrains Mono", monospace';
+            ctx.textAlign = 'center';
+            for (var p = 0; p < 4; p++) {
+                var lx = cx + (r + 30) * Math.cos(angles[p]);
+                var ly = cy + (r + 30) * Math.sin(angles[p]);
+                ctx.fillStyle = colors[p];
+                ctx.fillText(labels[p], lx, ly + 4);
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.fillText(scores[dims[p]].toFixed(1) + ' / 4.0', lx, ly + 20);
+            }
+        }
+
+        var stageDescs = {
+            metronome: 'Your organization is in the earliest stage of AI and data trust maturity. Governance is ad hoc, AI usage is largely ungoverned, and foundational structures are missing. The priority is establishing visibility: know what exists, identify what is ungoverned, and build the baseline.',
+            score: 'Your organization has begun building governance structures, but they are not yet fully operational. Policies exist, some frameworks are in place, and leadership is engaged. The priority is making governance run: operationalize the structures, close the gaps, and build the cadence.',
+            ensemble: 'Governance is operational and cross-functional. Teams are engaged, metrics are tracked, and frameworks are actively maintained. The priority is deepening integration: embed governance in workflows, expand the champion network, and connect governance to business outcomes.',
+            symphony: 'Your organization has achieved adaptive governance. Frameworks evolve continuously, regulatory changes are absorbed proactively, and governance is embedded in how the organization operates. The priority is sustaining excellence and extending governance to emerging domains like agentic AI.'
+        };
+
+        var recs = {
+            adopt: { 1: 'Start with an AI and Data Trust Assessment to map your current AI landscape.', 2: 'Formalize your AI adoption process with BDC\'s AI and Data Strategy service.', 3: 'Advance to risk-tiered automation with AI Governance consulting.', 4: 'Your adoption engine is strong. Focus on Adapt to keep it current.' },
+            govern: { 1: 'Begin with Data Governance Program Design to establish the foundation.', 2: 'Operationalize your governance structures with AI Governance consulting.', 3: 'Extend governance coverage with AI Enablement to drive broader adoption.', 4: 'Your governance is mature. TEMPO managed service keeps it adaptive.' },
+            orchestrate: { 1: 'AI Enablement & Adoption can build the organizational capability you need.', 2: 'Invest in change management and governance champion networks.', 3: 'Deepen adoption metrics and connect governance to business outcomes.', 4: 'Your orchestration is strong. Sustain it with TEMPO managed service.' },
+            adapt: { 1: 'You need a governance roadmap that includes continuous update mechanisms.', 2: 'Build regulatory monitoring into your governance cadence.', 3: 'Automate horizon scanning and connect it to framework updates.', 4: 'Your adaptation capability is excellent. TEMPO keeps it running.' }
+        };
+
+        function showResults() {
+            assessSection.classList.add('hidden');
+            resultsSection.classList.add('active');
+
+            var scores = calcScores();
+            var stage = getStage(scores.overall);
+
+            document.getElementById('stage-badge').className = 'stage-badge ' + stage.cls;
+            document.getElementById('stage-badge').textContent = stage.name;
+            document.getElementById('stage-title').textContent = stage.label;
+            document.getElementById('stage-desc').textContent = stageDescs[stage.cls];
+
+            drawRadar(scores);
+
+            var dims = ['adopt','govern','orchestrate','adapt'];
+            dims.forEach(function(d) {
+                document.getElementById('score-' + d).textContent = scores[d].toFixed(1);
+                document.getElementById('bar-' + d).style.width = (scores[d] / 4 * 100) + '%';
+                var lvl = Math.round(scores[d]);
+                if (lvl < 1) lvl = 1; if (lvl > 4) lvl = 4;
+                document.getElementById('rec-' + d).textContent = recs[d][lvl];
+            });
+
+            // Start blurred
+            document.getElementById('results-body').classList.add('blurred');
+
+            document.getElementById('email-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                document.getElementById('results-body').classList.remove('blurred');
+                document.getElementById('results-body').classList.add('unlocked');
+                document.getElementById('gate-form').style.display = 'none';
+                document.getElementById('results-cta').style.display = 'block';
+            });
+
+            window.scrollTo(0, 0);
+        }
+    })();
+    </script>
+</body>
+</html>

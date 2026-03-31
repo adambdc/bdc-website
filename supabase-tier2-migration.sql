@@ -11,10 +11,11 @@ ALTER TABLE assessments
   ADD COLUMN IF NOT EXISTS industry    TEXT,
   ADD COLUMN IF NOT EXISTS org_size    TEXT;
 
--- 2. Extend responses table for sub-dimension scores + consistency checks
+-- 2. Extend responses table for sub-dimension scores + consistency checks + branching
 ALTER TABLE responses
   ADD COLUMN IF NOT EXISTS subdimension_scores JSONB,
-  ADD COLUMN IF NOT EXISTS consistency_flags   JSONB;
+  ADD COLUMN IF NOT EXISTS consistency_flags   JSONB,
+  ADD COLUMN IF NOT EXISTS branch_decision     JSONB;
 
 -- 3. Unique indexes on access codes (prevents UUID collision, enables fast lookup)
 CREATE UNIQUE INDEX IF NOT EXISTS idx_assessments_invite_code ON assessments(invite_code);

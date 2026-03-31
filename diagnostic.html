@@ -248,41 +248,6 @@
             100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
         }
 
-        /* ── Access gate overlay ────────────────────────────── */
-        .access-gate {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #0A0A0A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .access-gate.dismissed { display: none; }
-        .access-gate-inner {
-            text-align: center;
-            max-width: 400px;
-            padding: 0 24px;
-        }
-        .access-gate-inner h2 { margin-bottom: 8px; }
-        .access-gate-inner p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
-        .access-gate-inner input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
-            font-family: var(--font-mono);
-            text-align: center;
-            letter-spacing: 0.1em;
-            box-sizing: border-box;
-        }
-        .access-gate-inner input:focus { outline: none; border-color: var(--purple); }
-        .access-gate-inner input::placeholder { color: var(--text-subtle); letter-spacing: normal; }
-        .access-gate-error { color: var(--coral); font-size: 12px; margin-top: 8px; display: none; }
-        .access-gate-inner .btn { width: 100%; margin-top: 12px; }
 
         /* ── Loading spinner ───────────────────────────────── */
         .btn-loading { position: relative; }
@@ -315,17 +280,6 @@
 </head>
 
 <body>
-    <!-- ═══ ACCESS GATE (user testing only, remove for production) ═══ -->
-    <div class="access-gate" id="access-gate">
-        <div class="access-gate-inner">
-            <p class="eyebrow">Beta Access</p>
-            <h2>Trust Diagnostic</h2>
-            <p>This assessment is currently in user testing. Enter your access code to continue.</p>
-            <input type="text" id="gate-code" placeholder="Access code" autocomplete="off">
-            <p class="access-gate-error" id="gate-code-error">Invalid access code.</p>
-            <button class="btn btn--primary" id="gate-code-btn">Enter</button>
-        </div>
-    </div>
 
     <nav class="nav">
         <div class="container">
@@ -719,7 +673,8 @@
               opts: ['We do not have a governance council or oversight body.',
                      'A council exists but meets irregularly and has limited decision-making authority.',
                      'The council meets on a regular cadence with clear RACI, decision rights, and escalation paths.',
-                     'Multiple coordinated governance bodies operate with automated reporting, cross-functional representation, and direct authority over AI and data decisions.']},
+                     'Multiple coordinated governance bodies operate with automated reporting, cross-functional representation, and direct authority over AI and data decisions.'],
+              consistencyId: 'gov_authority' },
             { dim: 'govern', subdim: 'compliance', text: 'How does your organization manage regulatory compliance for AI and data?',
               opts: ['We address compliance reactively when regulators or auditors raise issues.',
                      'We track major regulations but lack a systematic mapping to our governance practices.',
@@ -751,7 +706,8 @@
               opts: ['No. Governance is the responsibility of a central team only.',
                      'A few informal advocates exist, but they have no formal role or support.',
                      'Governance champions are identified, trained, and supported across major business units.',
-                     'A champion network operates as a self-sustaining community with peer mentoring, regular forums, and direct input into governance evolution.']},
+                     'A champion network operates as a self-sustaining community with peer mentoring, regular forums, and direct input into governance evolution.'],
+              consistencyId: 'champion_network' },
 
             // ADAPT (5)
             { dim: 'adapt', subdim: 'reg_response', text: 'How does your governance respond when regulations or AI capabilities change?',
@@ -778,12 +734,313 @@
               opts: ['Governance depends on specific individuals and breaks when they leave or the organization changes.',
                      'Core documentation exists, but governance effectiveness drops significantly during transitions.',
                      'Governance is institutionalized enough to survive leadership changes with minimal disruption.',
-                     'Governance is embedded in systems and processes, not people. Organizational changes trigger structured governance transition protocols.']}
+                     'Governance is embedded in systems and processes, not people. Organizational changes trigger structured governance transition protocols.'],
+              consistencyId: 'gov_resilience' }
         ];
 
-        /* Phase 6 will add 20 depth questions here. For now, Tier 2 uses core 20 only. */
+        /* ── Depth questions (5 per dimension, Phase 6) ──── */
+        /* Sub-dimensions per spec 4.2. Behavioral anchoring per Ahab UGF.9.
+           Each question: 4-option graduated, time-bounded recall, observable behaviors. */
+
+        var depthQuestionsAdvanced = [
+            // ADOPT depth (5): shadow AI, vendor AI gov, agentic AI readiness, data readiness depth, adoption ROI
+            { dim: 'adopt', subdim: 'shadow_ai', text: 'In the last 6 months, how has your organization detected unauthorized or unvetted AI tool usage?',
+              opts: ['We have not attempted to detect unauthorized AI usage.',
+                     'We have asked teams to self-report, but have no technical detection mechanism.',
+                     'We run periodic audits (network logs, procurement reviews, or endpoint scans) to identify unsanctioned AI tools.',
+                     'Automated discovery continuously flags new AI tools, with risk-tiered response workflows that resolved at least one case in the last quarter.']},
+            { dim: 'adopt', subdim: 'vendor_ai_gov', text: 'When your organization last evaluated an AI vendor or SaaS product with embedded AI, what governance was applied?',
+              opts: ['We do not evaluate vendor AI capabilities separately from the overall product.',
+                     'We ask vendors about their AI practices but do not have a standard evaluation framework.',
+                     'A defined vendor AI governance checklist covers data handling, model transparency, and risk allocation for every AI-enabled procurement.',
+                     'Vendor AI evaluations include contractual governance clauses, ongoing monitoring obligations, and have triggered a vendor change or renegotiation in the last 12 months.']},
+            { dim: 'adopt', subdim: 'agentic_readiness', text: 'How prepared is your organization for AI that can take autonomous actions (agentic AI, AI assistants that execute tasks)?',
+              opts: ['We have not considered autonomous AI agents or their governance implications.',
+                     'We are aware of agentic AI but have no policies or guardrails for autonomous AI actions.',
+                     'We have defined boundaries for AI autonomy levels, with human-in-the-loop requirements documented for each tier.',
+                     'Agentic AI governance is operational: autonomy boundaries are enforced technically, override mechanisms are tested, and at least one autonomous workflow runs with documented guardrails.']},
+            { dim: 'adopt', subdim: 'data_readiness_depth', text: 'Think about the last AI project your organization deployed. How was data readiness handled?',
+              opts: ['Data was used as-is. No readiness assessment was performed.',
+                     'The project team informally checked data quality, but there was no standard process or documentation.',
+                     'A formal data readiness assessment was completed covering quality, lineage, bias, and representativeness before deployment.',
+                     'Data readiness is a mandatory gate with quantitative thresholds. The last project produced a data readiness scorecard that blocked or conditionally approved deployment.']},
+            { dim: 'adopt', subdim: 'adoption_roi', text: 'How does your organization measure the return on AI investments?',
+              opts: ['We do not measure AI ROI. Success is anecdotal.',
+                     'Some projects track basic metrics (cost savings, time reduction), but there is no standard methodology.',
+                     'A defined ROI framework is applied to all AI initiatives, with pre-deployment baselines and post-deployment measurement.',
+                     'AI ROI is tracked in an ongoing portfolio view with leading indicators, and at least one initiative was adjusted or discontinued based on measured returns in the last 12 months.']},
+
+            // GOVERN depth (5): veto test, regulatory mapping, ethics operationalization, incident response, policy enforcement
+            { dim: 'govern', subdim: 'veto_test', text: 'In the last 12 months, has your governance framework actually stopped or significantly altered an AI initiative?',
+              opts: ['No. Governance has never blocked or altered an AI initiative.',
+                     'Governance raised concerns, but they were overridden or worked around.',
+                     'Governance stopped or materially changed at least one AI initiative, and the decision was documented.',
+                     'Governance regularly exercises decision authority. Multiple initiatives have been stopped, scoped down, or redesigned based on governance review in the last year.'],
+              consistencyId: 'gov_authority' },
+            { dim: 'govern', subdim: 'reg_mapping', text: 'How does your organization map regulatory requirements to specific governance controls?',
+              opts: ['We do not have a mapping between regulations and our governance practices.',
+                     'Key regulations are identified, but the mapping to specific controls is incomplete or informal.',
+                     'A regulatory-to-control mapping exists, is maintained, and was used to demonstrate compliance in the last audit.',
+                     'Automated regulatory change monitoring triggers mapping updates, and control coverage reports are generated for each applicable regulation.']},
+            { dim: 'govern', subdim: 'ethics_ops', text: 'When was the last time your AI ethics framework was invoked to make an actual decision?',
+              opts: ['We do not have an AI ethics framework, or it has never been invoked.',
+                     'The framework exists but has not been used in a real decision in the last 12 months.',
+                     'The ethics framework was invoked for at least one decision in the last 12 months, with the outcome documented.',
+                     'Ethics review is a standard stage in the AI lifecycle. Multiple decisions were informed by the framework in the last 6 months, with documented rationale and outcomes.']},
+            { dim: 'govern', subdim: 'incident_response', text: 'How does your organization respond when an AI system produces an incorrect, biased, or harmful output?',
+              opts: ['There is no defined process. Issues are handled ad hoc by whoever discovers them.',
+                     'An informal escalation path exists, but response times and actions are inconsistent.',
+                     'A documented incident response process covers detection, containment, root cause analysis, and remediation for AI-related incidents.',
+                     'Incident response is tested (tabletop or live drill) at least annually, with mean time to containment tracked and improving over the last two reporting periods.']},
+            { dim: 'govern', subdim: 'policy_enforcement', text: 'How does your organization verify that AI and data governance policies are actually followed?',
+              opts: ['We rely on trust. There is no mechanism to verify policy compliance.',
+                     'Managers are expected to enforce policies, but verification is manual and inconsistent.',
+                     'Policy compliance is measured through periodic audits, spot checks, or attestation processes with documented findings.',
+                     'Automated compliance monitoring detects policy violations in near real-time, with escalation workflows that resolved at least one violation in the last quarter.']},
+
+            // ORCHESTRATE depth (5): stewardship behavior, cross-functional coordination, champion health, training effectiveness, role clarity enforcement
+            { dim: 'orchestrate', subdim: 'stewardship_behavior', text: 'How do data stewards in your organization actually behave day-to-day?',
+              opts: ['We do not have designated data stewards, or they exist in name only.',
+                     'Stewards are assigned but their governance activities are secondary to their primary role and rarely performed.',
+                     'Stewards actively manage data quality, resolve ownership disputes, and participate in governance reviews as a defined part of their role.',
+                     'Stewardship activities are tracked with measurable outputs (issues resolved, quality improvements documented), and steward performance is part of their regular evaluation.']},
+            { dim: 'orchestrate', subdim: 'cross_functional_coord', text: 'When an AI or data initiative requires coordination across departments, how does that work?',
+              opts: ['Cross-functional coordination is ad hoc. Teams work in silos.',
+                     'Coordination happens through informal relationships, but there is no structured mechanism.',
+                     'Cross-functional governance forums or working groups meet regularly with defined membership, agendas, and decision-tracking.',
+                     'Cross-functional coordination is embedded in project methodology. Joint governance checkpoints are mandatory, and at least one cross-team governance decision was made in the last quarter.']},
+            { dim: 'orchestrate', subdim: 'champion_health', text: 'If your organization has governance champions or ambassadors, how healthy is that network?',
+              opts: ['We do not have governance champions.',
+                     'Champions were appointed but the network is inactive. Most have not performed champion duties in the last 6 months.',
+                     'Champions are active, meet regularly, and have facilitated at least one governance initiative in their area in the last 6 months.',
+                     'The champion network is self-sustaining: champions recruit and mentor successors, contribute to governance evolution, and their impact is measured.']},
+            { dim: 'orchestrate', subdim: 'training_effectiveness', text: 'How does your organization know whether governance training actually changes behavior?',
+              opts: ['We do not measure training effectiveness, or we only track completion rates.',
+                     'We collect satisfaction surveys after training, but do not measure behavioral change.',
+                     'Training effectiveness is measured through post-training assessments and observed behavioral changes (e.g., reduced policy violations, improved data quality).',
+                     'Training programs are continuously refined based on measured outcomes. At least one training module was redesigned in the last 12 months based on effectiveness data.']},
+            { dim: 'orchestrate', subdim: 'role_clarity_enforcement', text: 'When governance roles overlap or gaps appear, how quickly is the issue resolved?',
+              opts: ['Role conflicts and gaps persist indefinitely. There is no mechanism to detect or resolve them.',
+                     'Issues are surfaced when they cause problems, but resolution is slow and informal.',
+                     'A RACI or responsibility matrix is maintained and reviewed at least quarterly, with documented resolution of conflicts.',
+                     'Role clarity is monitored continuously. Overlaps and gaps are detected proactively and resolved within a defined SLA, with at least one adjustment made in the last 6 months.'],
+              consistencyId: 'champion_network' },
+
+            // ADAPT depth (5): horizon scanning mechanics, tech change absorption, CI documentation, feedback loops, governance resilience
+            { dim: 'adapt', subdim: 'horizon_mechanics', text: 'What specific mechanisms does your organization use to scan for emerging AI regulations and technology shifts?',
+              opts: ['None. We learn about changes when they directly affect us.',
+                     'Individual leaders follow industry news, but there is no systematic scanning process.',
+                     'Designated staff or a working group monitors regulatory bodies, industry groups, and technology developments with regular briefings.',
+                     'Automated monitoring tools (regulatory feeds, patent databases, standards body updates) feed into a structured triage process that produced at least one pre-emptive governance update in the last 12 months.']},
+            { dim: 'adapt', subdim: 'tech_absorption', text: 'When a significant new AI capability emerged in the last 12 months (e.g., new model release, new modality), how did your governance respond?',
+              opts: ['We did not adjust governance in response to new AI capabilities.',
+                     'We discussed the implications informally, but governance frameworks were not updated.',
+                     'We conducted a formal impact assessment and updated at least one governance control or policy.',
+                     'New capability assessment is a standard process. The last significant AI development triggered a documented governance review within 30 days, with specific framework updates.']},
+            { dim: 'adapt', subdim: 'ci_documentation', text: 'How does your organization document and track continuous improvements to its governance?',
+              opts: ['Governance changes are not documented beyond the current version of policies.',
+                     'Major changes are documented, but there is no systematic change log or version history.',
+                     'All governance changes are tracked in a versioned change log with rationale, effective dates, and responsible parties.',
+                     'Continuous improvement is measured: governance effectiveness metrics are trended, improvement initiatives are tracked to completion, and the improvement rate itself is a KPI.']},
+            { dim: 'adapt', subdim: 'feedback_loops', text: 'How do frontline teams feed governance issues or improvement ideas back to the governance body?',
+              opts: ['There is no feedback mechanism. Governance is top-down only.',
+                     'Teams can raise issues informally, but there is no structured intake or tracking.',
+                     'A defined feedback channel exists (intake form, regular forum, or champion network) with tracked response times.',
+                     'Feedback is systematically collected, triaged, and at least 3 governance improvements in the last 12 months originated from frontline feedback.']},
+            { dim: 'adapt', subdim: 'gov_resilience', text: 'Has your governance survived a significant organizational change (leadership turnover, restructuring, M&A) in the last 2 years?',
+              opts: ['We have not experienced significant change, or governance collapsed when it happened.',
+                     'Governance was disrupted and took more than 6 months to recover.',
+                     'Governance continued with some disruption but recovered within one quarter.',
+                     'Governance transition protocols activated automatically. Core governance functions continued without interruption, and the transition was documented as a case study.'],
+              consistencyId: 'gov_resilience' }
+        ];
+
+        /* ── Foundational probes (shown when dim core score < 1.5) ── */
+        /* Simpler, non-threatening questions for dimensions where the org is at earliest maturity */
+        var foundationalProbes = {
+            adopt: [
+                { dim: 'adopt', subdim: 'shadow_ai_f', text: 'If an employee started using a new AI tool tomorrow without telling anyone, how would you find out?',
+                  opts: ['We probably would not find out.',
+                         'We might hear about it informally, but there is no way to systematically detect it.',
+                         'Our IT or procurement team would likely catch it through existing monitoring.',
+                         'Automated tools would flag it within days.'],
+                  isFoundational: true },
+                { dim: 'adopt', subdim: 'vendor_ai_gov_f', text: 'When you last purchased software, did anyone ask the vendor about how it uses AI?',
+                  opts: ['No, AI capabilities were not part of the evaluation.',
+                         'Someone may have asked, but it was not a formal part of the process.',
+                         'Yes, we asked specific questions about AI usage and data handling.',
+                         'AI governance is a standard section in our vendor evaluation checklist.'],
+                  isFoundational: true },
+                { dim: 'adopt', subdim: 'agentic_readiness_f', text: 'How would your organization react if an AI assistant sent an email or made a decision on behalf of an employee?',
+                  opts: ['We have not considered this scenario.',
+                         'It would cause concern, but we have no guidelines for it.',
+                         'We have general guidelines about AI autonomy, though they may not be widely known.',
+                         'Clear policies define what AI can and cannot do autonomously, and employees know them.'],
+                  isFoundational: true },
+                { dim: 'adopt', subdim: 'data_readiness_depth_f', text: 'Before your most recent technology project, did anyone assess whether the data was good enough?',
+                  opts: ['No, we used whatever data was available.',
+                         'Someone probably checked informally, but there was no formal assessment.',
+                         'Yes, data quality was evaluated as part of the project planning.',
+                         'Data readiness is a required gate before any project proceeds.'],
+                  isFoundational: true },
+                { dim: 'adopt', subdim: 'adoption_roi_f', text: 'Can you point to a specific number that shows whether your AI investments are paying off?',
+                  opts: ['No, we have no AI ROI metrics.',
+                         'We have anecdotal evidence but no hard numbers.',
+                         'Yes, at least one AI initiative has documented ROI metrics.',
+                         'All AI initiatives are tracked against baseline metrics with regular reporting.'],
+                  isFoundational: true }
+            ],
+            govern: [
+                { dim: 'govern', subdim: 'veto_test_f', text: 'If someone proposed an AI project that your governance team thought was risky, what would happen?',
+                  opts: ['We do not have a governance team that reviews AI projects.',
+                         'The governance team could raise concerns, but they would likely be overruled.',
+                         'The governance team has the authority to require changes before the project proceeds.',
+                         'The governance team has stopped or significantly changed projects in the past.'],
+                  isFoundational: true, consistencyId: 'gov_authority' },
+                { dim: 'govern', subdim: 'reg_mapping_f', text: 'If a regulator asked which of your governance controls address a specific regulation, how quickly could you answer?',
+                  opts: ['We could not answer that question readily.',
+                         'We could provide a general answer but not a specific control-to-regulation mapping.',
+                         'We could produce a mapping within a few days.',
+                         'We have a current mapping document that we could share immediately.'],
+                  isFoundational: true },
+                { dim: 'govern', subdim: 'ethics_ops_f', text: 'Has anyone in your organization ever said "we should not do this AI project for ethical reasons" and been heard?',
+                  opts: ['Ethics concerns about AI have never been formally raised.',
+                         'Concerns have been raised but were not addressed through any formal process.',
+                         'At least one ethical concern was raised and addressed through a defined review process.',
+                         'Ethics review is a regular part of AI decision-making, with multiple cases documented.'],
+                  isFoundational: true },
+                { dim: 'govern', subdim: 'incident_response_f', text: 'If an AI system produced a wrong or harmful result today, who would be called and what would they do?',
+                  opts: ['It is unclear who would be responsible or what steps to take.',
+                         'Someone would probably escalate it, but there is no documented process.',
+                         'We have a documented process that identifies who to contact and what steps to follow.',
+                         'We have a tested process with defined roles, and we have practiced or used it at least once.'],
+                  isFoundational: true },
+                { dim: 'govern', subdim: 'policy_enforcement_f', text: 'How would you know if a team in your organization was not following your AI or data governance policies?',
+                  opts: ['We would not know unless someone reported it.',
+                         'We might find out during an audit or review, but there is no ongoing monitoring.',
+                         'We conduct periodic checks or audits that would surface non-compliance.',
+                         'Automated monitoring detects policy violations and triggers alerts.'],
+                  isFoundational: true }
+            ],
+            orchestrate: [
+                { dim: 'orchestrate', subdim: 'stewardship_behavior_f', text: 'If you asked a data steward in your organization what they did for governance last month, what would they say?',
+                  opts: ['We do not have data stewards, or they would not know what you meant.',
+                         'They would acknowledge the title but struggle to point to specific governance activities.',
+                         'They could describe specific activities: data quality reviews, ownership decisions, or governance meetings.',
+                         'They could show you tracked outputs: issues resolved, quality metrics improved, stakeholders consulted.'],
+                  isFoundational: true },
+                { dim: 'orchestrate', subdim: 'cross_functional_coord_f', text: 'When an AI project needs input from multiple departments, how does that coordination happen?',
+                  opts: ['It does not. Teams work independently.',
+                         'Project managers coordinate informally through email or meetings.',
+                         'There are defined forums or working groups for cross-team governance decisions.',
+                         'Cross-functional governance is embedded in how projects run, with mandatory checkpoints.'],
+                  isFoundational: true },
+                { dim: 'orchestrate', subdim: 'champion_health_f', text: 'Is there anyone outside the central governance team who actively promotes governance practices in their department?',
+                  opts: ['No. Governance is only the central team\'s concern.',
+                         'A few people are informally interested, but they have no formal role.',
+                         'We have identified champions who are trained and supported.',
+                         'A self-sustaining network of champions operates across the organization.'],
+                  isFoundational: true },
+                { dim: 'orchestrate', subdim: 'training_effectiveness_f', text: 'After your last governance training session, did anything actually change in how people work?',
+                  opts: ['We have not conducted governance training.',
+                         'Training was delivered, but we did not measure whether behavior changed.',
+                         'We observed some behavioral changes and can point to specific examples.',
+                         'We measured behavioral change and used the data to improve the next training cycle.'],
+                  isFoundational: true },
+                { dim: 'orchestrate', subdim: 'role_clarity_enforcement_f', text: 'If two people in your organization disagreed about who owns a governance decision, how would it get resolved?',
+                  opts: ['It would probably remain unresolved or be decided by whoever speaks loudest.',
+                         'A manager would make a judgment call, but there is no defined escalation path.',
+                         'A responsibility matrix or defined escalation path would resolve it.',
+                         'Role overlaps are detected proactively before they cause conflicts.'],
+                  isFoundational: true, consistencyId: 'champion_network' }
+            ],
+            adapt: [
+                { dim: 'adapt', subdim: 'horizon_mechanics_f', text: 'How did your organization first learn about the EU AI Act (or another recent AI regulation relevant to your industry)?',
+                  opts: ['We have not heard of it, or we learned about it very late.',
+                         'Someone on the team read about it in the news.',
+                         'Our legal or compliance team flagged it through a monitoring process.',
+                         'We were tracking it before it was finalized and had a pre-mapped response plan.'],
+                  isFoundational: true },
+                { dim: 'adapt', subdim: 'tech_absorption_f', text: 'When a major new AI model was released in the last year, what did your organization do?',
+                  opts: ['Nothing. We were not aware of it or did not consider its governance implications.',
+                         'Some people tried it individually, but there was no organizational response.',
+                         'We discussed the implications and considered whether our policies needed updating.',
+                         'We assessed the new capability against our governance framework and made specific updates within 30 days.'],
+                  isFoundational: true },
+                { dim: 'adapt', subdim: 'ci_documentation_f', text: 'Can you find documentation of what your governance looked like 12 months ago and how it has changed since?',
+                  opts: ['No. We do not track governance changes over time.',
+                         'We could piece it together from emails or meeting notes, but there is no formal record.',
+                         'A change log or version history exists for our governance documents.',
+                         'Governance evolution is tracked systematically with rationale, dates, and effectiveness measures.'],
+                  isFoundational: true },
+                { dim: 'adapt', subdim: 'feedback_loops_f', text: 'If a frontline employee had an idea to improve a governance process, how would they share it?',
+                  opts: ['There is no obvious way to share governance feedback.',
+                         'They could tell their manager, but it is unlikely to reach the governance team.',
+                         'A feedback channel exists (form, forum, or champion) that routes to the governance team.',
+                         'Feedback is actively solicited, tracked, and multiple improvements have originated from frontline input.'],
+                  isFoundational: true },
+                { dim: 'adapt', subdim: 'gov_resilience_f', text: 'If your main governance sponsor left the organization tomorrow, what would happen to governance?',
+                  opts: ['Governance would likely stall or collapse.',
+                         'It would continue at a reduced pace until a replacement was found.',
+                         'Core governance processes would continue because they are documented and shared across the team.',
+                         'Transition protocols would activate, and governance would continue without interruption.'],
+                  isFoundational: true, consistencyId: 'gov_resilience' }
+            ]
+        };
+
+        /* ── Consistency check pairs ──────────────────────── */
+        /* Three pairs: advanced source question (in depthQuestionsAdvanced) paired with
+           foundational target (in foundationalProbes). The source uses isConsistencySource
+           and the target uses isConsistencyTarget, both sharing a consistencyId.
+           Pair 1: gov_authority — govern veto test (advanced Q6) vs foundational govern Q1
+           Pair 2: role_resolution — orchestrate role clarity enforcement (advanced Q19) vs foundational orchestrate Q5
+           Pair 3: gov_resilience — adapt governance resilience (advanced Q20) vs foundational adapt Q5
+           When both members of a pair are answered, delta is tracked. */
+
+        var consistencyPairs = [
+            { id: 'gov_authority',   label: 'Governance decision authority' },
+            { id: 'champion_network', label: 'Champion network maturity' },
+            { id: 'gov_resilience',  label: 'Governance resilience to change' }
+        ];
+
+        /* ── Adaptive question assembly ──────────────────── */
+        /* After core 20 are answered, compute core dim scores.
+           If dim < 1.5 on core 5, swap that dim's advanced questions for foundational probes. */
+
+        function assembleFinalQuestions() {
+            var coreDimScores = {};
+            var dims = ['adopt', 'govern', 'orchestrate', 'adapt'];
+            dims.forEach(function (d) {
+                var vals = [];
+                coreQuestions.forEach(function (q, i) {
+                    if (q.dim === d && answers[i] >= 0) vals.push(answers[i] + 1);
+                });
+                coreDimScores[d] = vals.length > 0
+                    ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length
+                    : 0;
+            });
+
+            var depth = [];
+            var branchInfo = {};
+            dims.forEach(function (d) {
+                if (coreDimScores[d] < 1.5) {
+                    depth = depth.concat(foundationalProbes[d]);
+                    branchInfo[d] = 'foundational';
+                } else {
+                    var advForDim = depthQuestionsAdvanced.filter(function (q) { return q.dim === d; });
+                    depth = depth.concat(advForDim);
+                    branchInfo[d] = 'advanced';
+                }
+            });
+
+            return { questions: depth, branchInfo: branchInfo, coreDimScores: coreDimScores };
+        }
+
+        /* ── Build initial question set (core only until branching) ── */
         var depthQuestions = [];
         var questions = coreQuestions.concat(depthQuestions);
+        var branchDecision = null; /* set after core 20 answered */
+        var depthStartIndex = coreQuestions.length; /* index 20 */
 
         /* ── Lookup tables ────────────────────────────────── */
         var dimNames   = { adopt: 'Adopt', govern: 'Govern', orchestrate: 'Orchestrate', adapt: 'Adapt' };
@@ -838,33 +1095,8 @@
             window.scrollTo(0, 0);
         }
 
-        /* ── Access gate (remove for production) ──────────── */
-        var GATE_CODE = 'trustpulse2026';
-        var gateEl    = document.getElementById('access-gate');
-
-        (function checkGate() {
-            if (sessionStorage.getItem('diag_access') === 'granted') {
-                gateEl.classList.add('dismissed');
-                startRouter();
-                return;
-            }
-            /* Gate is visible; hide everything behind it */
-            document.getElementById('gate-code-btn').addEventListener('click', tryGateCode);
-            document.getElementById('gate-code').addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') tryGateCode();
-            });
-        })();
-
-        function tryGateCode() {
-            var input = document.getElementById('gate-code').value.trim().toLowerCase();
-            if (input === GATE_CODE) {
-                sessionStorage.setItem('diag_access', 'granted');
-                gateEl.classList.add('dismissed');
-                startRouter();
-            } else {
-                document.getElementById('gate-code-error').style.display = 'block';
-            }
-        }
+        /* ── Start router immediately (gate removed for production) ── */
+        startRouter();
 
         /* ── localStorage helpers (pause/resume) ─────────── */
         var STORAGE_KEY = 'diag_session';
@@ -879,6 +1111,7 @@
                 userEmail: userEmail,
                 userRole: userRole,
                 isOrganizer: isOrganizer,
+                branchDecision: branchDecision,
                 ts: Date.now()
             };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
@@ -925,6 +1158,25 @@
                     userEmail    = saved.userEmail;
                     userRole     = saved.userRole;
                     isOrganizer  = saved.isOrganizer;
+
+                    /* Rebuild depth questions from saved branch decision */
+                    if (saved.branchDecision) {
+                        branchDecision = saved.branchDecision;
+                        var dims = ['adopt', 'govern', 'orchestrate', 'adapt'];
+                        depthQuestions = [];
+                        dims.forEach(function (d) {
+                            if (branchDecision[d] === 'foundational') {
+                                depthQuestions = depthQuestions.concat(foundationalProbes[d]);
+                            } else {
+                                depthQuestions = depthQuestions.concat(
+                                    depthQuestionsAdvanced.filter(function (q) { return q.dim === d; })
+                                );
+                            }
+                        });
+                        questions = coreQuestions.concat(depthQuestions);
+                        while (answers.length < questions.length) answers.push(-1);
+                    }
+
                     showScreen('screen-assess');
                     renderQ();
                     return;
@@ -1273,6 +1525,17 @@
 
         nextBtn.addEventListener('click', function () {
             if (answers[currentQ] < 0) return;
+
+            /* Adaptive branching: after last core question, assemble depth questions */
+            if (currentQ === depthStartIndex - 1 && !branchDecision) {
+                var assembled = assembleFinalQuestions();
+                depthQuestions = assembled.questions;
+                branchDecision = assembled.branchInfo;
+                questions = coreQuestions.concat(depthQuestions);
+                /* Resize answers array to match new question count */
+                while (answers.length < questions.length) answers.push(-1);
+            }
+
             if (currentQ < questions.length - 1) {
                 currentQ++;
                 saveProgress();
@@ -1285,8 +1548,15 @@
         /* ── Scoring ──────────────────────────────────────── */
         function calcScores() {
             var dims = { adopt: [], govern: [], orchestrate: [], adapt: [] };
+            var subdims = {}; /* subdim -> [values] */
+
             questions.forEach(function (q, i) {
-                if (answers[i] >= 0) dims[q.dim].push(answers[i] + 1);
+                if (answers[i] >= 0) {
+                    dims[q.dim].push(answers[i] + 1);
+                    var key = q.dim + '.' + q.subdim;
+                    if (!subdims[key]) subdims[key] = [];
+                    subdims[key].push(answers[i] + 1);
+                }
             });
 
             var scores = {};
@@ -1302,6 +1572,36 @@
             if (lowest < 1.5 && scores.overall > lowest + 1) {
                 scores.overall = parseFloat((lowest + 1).toFixed(2));
             }
+
+            /* Subdimension scores: mean of questions sharing a subdim */
+            var subdimScores = {};
+            for (var sk in subdims) {
+                var arr = subdims[sk];
+                subdimScores[sk] = parseFloat((arr.reduce(function (a, b) { return a + b; }, 0) / arr.length).toFixed(2));
+            }
+            scores.subdimension_scores = subdimScores;
+
+            /* Consistency flags: find question pairs sharing the same consistencyId */
+            var consistencyFlags = [];
+            consistencyPairs.forEach(function (pair) {
+                var vals = [];
+                questions.forEach(function (q, i) {
+                    if (answers[i] >= 0 && q.consistencyId === pair.id) {
+                        vals.push(answers[i] + 1);
+                    }
+                });
+                if (vals.length >= 2) {
+                    var delta = Math.abs(vals[0] - vals[1]);
+                    consistencyFlags.push({
+                        id: pair.id,
+                        label: pair.label,
+                        values: vals,
+                        delta: delta,
+                        flagged: delta > 1
+                    });
+                }
+            });
+            scores.consistency_flags = consistencyFlags;
 
             return scores;
         }
@@ -1341,8 +1641,11 @@
                         orchestrate: parseFloat(scores.orchestrate.toFixed(1)),
                         adapt:       parseFloat(scores.adapt.toFixed(1))
                     },
-                    overall_score:    parseFloat(scores.overall.toFixed(2)),
-                    stage:            stage.cls
+                    overall_score:       parseFloat(scores.overall.toFixed(2)),
+                    stage:               stage.cls,
+                    subdimension_scores: scores.subdimension_scores || {},
+                    consistency_flags:   scores.consistency_flags || [],
+                    branch_decision:     branchDecision || {}
                 };
 
                 var result = await client.from('responses').insert(respData);

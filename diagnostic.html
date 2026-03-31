@@ -248,6 +248,42 @@
             100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
         }
 
+        /* ── Access gate overlay ────────────────────────────── */
+        .access-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #0A0A0A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .access-gate.dismissed { display: none; }
+        .access-gate-inner {
+            text-align: center;
+            max-width: 400px;
+            padding: 0 24px;
+        }
+        .access-gate-inner h2 { margin-bottom: 8px; }
+        .access-gate-inner p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+        .access-gate-inner input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            font-family: var(--font-mono);
+            text-align: center;
+            letter-spacing: 0.1em;
+            box-sizing: border-box;
+        }
+        .access-gate-inner input:focus { outline: none; border-color: var(--purple); }
+        .access-gate-inner input::placeholder { color: var(--text-subtle); letter-spacing: normal; }
+        .access-gate-error { color: var(--coral); font-size: 12px; margin-top: 8px; display: none; }
+        .access-gate-inner .btn { width: 100%; margin-top: 12px; }
+
         /* ── Loading spinner ───────────────────────────────── */
         .btn-loading { position: relative; }
         .btn-loading::after {
@@ -279,6 +315,18 @@
 </head>
 
 <body>
+    <!-- ═══ ACCESS GATE (user testing only, remove for production) ═══ -->
+    <div class="access-gate" id="access-gate">
+        <div class="access-gate-inner">
+            <p class="eyebrow">Beta Access</p>
+            <h2>Trust Diagnostic</h2>
+            <p>This assessment is currently in user testing. Enter your access code to continue.</p>
+            <input type="text" id="gate-code" placeholder="Access code" autocomplete="off">
+            <p class="access-gate-error" id="gate-code-error">Invalid access code.</p>
+            <button class="btn btn--primary" id="gate-code-btn">Enter</button>
+        </div>
+    </div>
+
     <nav class="nav">
         <div class="container">
             <a href="index.html" class="nav__logo-link">
@@ -790,8 +838,72 @@
             window.scrollTo(0, 0);
         }
 
+        /* ── Access gate (remove for production) ──────────── */
+        var GATE_CODE = 'trustpulse2026';
+        var gateEl    = document.getElementById('access-gate');
+
+        (function checkGate() {
+            if (sessionStorage.getItem('diag_access') === 'granted') {
+                gateEl.classList.add('dismissed');
+                startRouter();
+                return;
+            }
+            /* Gate is visible; hide everything behind it */
+            document.getElementById('gate-code-btn').addEventListener('click', tryGateCode);
+            document.getElementById('gate-code').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') tryGateCode();
+            });
+        })();
+
+        function tryGateCode() {
+            var input = document.getElementById('gate-code').value.trim().toLowerCase();
+            if (input === GATE_CODE) {
+                sessionStorage.setItem('diag_access', 'granted');
+                gateEl.classList.add('dismissed');
+                startRouter();
+            } else {
+                document.getElementById('gate-code-error').style.display = 'block';
+            }
+        }
+
+        /* ── localStorage helpers (pause/resume) ─────────── */
+        var STORAGE_KEY = 'diag_session';
+
+        function saveProgress() {
+            var data = {
+                answers: answers,
+                currentQ: currentQ,
+                assessmentId: assessmentId,
+                inviteCode: inviteCode,
+                adminCode: adminCode,
+                userEmail: userEmail,
+                userRole: userRole,
+                isOrganizer: isOrganizer,
+                ts: Date.now()
+            };
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+        }
+
+        function loadProgress() {
+            try {
+                var raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return null;
+                var data = JSON.parse(raw);
+                /* Expire after 24 hours */
+                if (Date.now() - data.ts > 86400000) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    return null;
+                }
+                return data;
+            } catch (e) { return null; }
+        }
+
+        function clearProgress() {
+            try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        }
+
         /* ── Router: determine flow from URL params ──────── */
-        (function route() {
+        function startRouter() {
             var params = new URLSearchParams(window.location.search);
             var invite = params.get('invite');
             var admin  = params.get('admin');
@@ -802,9 +914,24 @@
                 inviteCode = invite;
                 validateInviteCode(invite);
             } else {
+                /* Check for saved progress */
+                var saved = loadProgress();
+                if (saved && saved.assessmentId && saved.answers.some(function (a) { return a >= 0; })) {
+                    answers      = saved.answers;
+                    currentQ     = saved.currentQ;
+                    assessmentId = saved.assessmentId;
+                    inviteCode   = saved.inviteCode;
+                    adminCode    = saved.adminCode;
+                    userEmail    = saved.userEmail;
+                    userRole     = saved.userRole;
+                    isOrganizer  = saved.isOrganizer;
+                    showScreen('screen-assess');
+                    renderQ();
+                    return;
+                }
                 showScreen('screen-create');
             }
-        })();
+        }
 
         /* ── Flow 1: CREATE ──────────────────────────────── */
         var createBtn   = document.getElementById('create-btn');
@@ -848,6 +975,7 @@
                 userEmail    = email;
                 isOrganizer  = true;
 
+                saveProgress();
                 showInviteScreen();
             } catch (err) {
                 console.error('Create failed:', err);
@@ -1123,6 +1251,7 @@
                 div.innerHTML = '<div class="option-marker"></div><div><div class="option-text">' + opt + '</div></div>';
                 div.addEventListener('click', function () {
                     answers[currentQ] = i;
+                    saveProgress();
                     renderQ();
                 });
                 optionsEl.appendChild(div);
@@ -1139,13 +1268,14 @@
         }
 
         prevBtn.addEventListener('click', function () {
-            if (currentQ > 0) { currentQ--; renderQ(); }
+            if (currentQ > 0) { currentQ--; saveProgress(); renderQ(); }
         });
 
         nextBtn.addEventListener('click', function () {
             if (answers[currentQ] < 0) return;
             if (currentQ < questions.length - 1) {
                 currentQ++;
+                saveProgress();
                 renderQ();
             } else {
                 submitDiagnostic();
@@ -1217,6 +1347,8 @@
 
                 var result = await client.from('responses').insert(respData);
                 if (result.error) throw result.error;
+
+                clearProgress();
 
                 if (isOrganizer) {
                     /* Organizer goes to admin results */

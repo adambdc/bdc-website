@@ -379,6 +379,24 @@ section {
   margin-bottom: 12px;
 }
 
+/* Evidence layer stat callouts */
+.stat-callout {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--chartreuse);
+  margin-top: 16px;
+  line-height: 1.5;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.stat-source {
+  font-size: 11px;
+  color: var(--text-subtle);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
 /* Quote Cards */
 .quote-card {
   background: rgba(255, 255, 255, 0.03);

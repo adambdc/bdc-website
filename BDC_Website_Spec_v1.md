@@ -30,39 +30,43 @@ Build a 4-page static HTML/CSS/JS marketing website for Bamboo Digital Consultin
 ```css
 :root {
   /* Backgrounds */
-  --bg:           #0A0A0A;
-  --bg-section:   #060F0B;
-  --bg-card:      #0A1A12;
-  --bg-deep:      #022C22;
+  --bg:           #0A0A0A;   /* Page background */
+  --bg-section:   #0F0F1A;   /* Alternate section background */
+  --bg-card:      #111128;   /* Card background */
+  --bg-deep:      #1E0A3C;   /* Deep purple — hero accents */
 
   /* Brand */
-  --green:        #059669;
-  --chartreuse:   #6B9E1E;
-  --coral:        #F97316;
-  --green-hover:  #10B981;
+  --purple:       #7B2FBE;   /* Vivid purple — CTAs, highlights */
+  --pink:         #E91E8C;   /* Hot pink — AI accent, eyebrows */
+  --crimson:      #D42B4F;   /* Crimson — urgency, risk */
+  --coral:        #FF4D6A;   /* Coral — hover states, accents */
+  --blue:         #3B82F6;   /* Blue — D2 domain color only */
+  --soft-purple:  #8B5CF6;   /* Soft purple — D5 domain color */
+  --gray:         #6B7280;   /* Gray — D6 domain color */
 
   /* Text */
-  --text:         #F8F8FA;
-  --text-muted:   #9CA3AF;
-  --text-subtle:  #6B7280;
+  --text:         #F8F8FA;   /* Primary text */
+  --text-muted:   #9CA3AF;   /* Secondary text */
+  --text-subtle:  #6B7280;   /* Tertiary text, footer */
 
   /* Borders */
-  --border:       rgba(5, 150, 105, 0.25);
-  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border:       rgba(123, 47, 190, 0.25);   /* Purple-tinted border */
+  --border-subtle: rgba(255, 255, 255, 0.08); /* Subtle white border */
 
   /* Gradients */
-  --grad-accent:  linear-gradient(135deg, #059669, #6B9E1E);
-  --grad-hero:    linear-gradient(135deg, #022C22 0%, #059669 40%, #6B9E1E 100%);
-  --grad-green:   linear-gradient(135deg, #022C22, #059669, #10B981);
-  --grad-button:  linear-gradient(135deg, #059669, #6B9E1E);
+  --grad-accent:  linear-gradient(135deg, #7B2FBE, #E91E8C);
+  --grad-hero:    linear-gradient(135deg, #1E0A3C 0%, #7B2FBE 60%, #E91E8C 100%);
+  --grad-urgency: linear-gradient(135deg, #D42B4F, #FF4D6A);
+  --grad-full:    linear-gradient(90deg, #1E0A3C, #7B2FBE, #E91E8C);
+  --grad-button:  linear-gradient(135deg, #7B2FBE, #E91E8C);
 
   /* Domain colors */
-  --d0: #6B9E1E;  /* Strategy & Value */
-  --d1: #059669;  /* Governance Core */
+  --d0: #E91E8C;  /* Strategy & Value */
+  --d1: #7B2FBE;  /* Governance Core */
   --d2: #3B82F6;  /* Data Quality */
-  --d3: #10B981;  /* AI & ML Governance */
-  --d4: #F97316;  /* Regulatory & Compliance */
-  --d5: #059669;  /* Architecture & Enablement */
+  --d3: #FF4D6A;  /* AI & ML Governance */
+  --d4: #D42B4F;  /* Regulatory & Compliance */
+  --d5: #8B5CF6;  /* Architecture & Enablement */
   --d6: #6B7280;  /* Operations & Change */
 }
 ```
@@ -86,15 +90,15 @@ Build a 4-page static HTML/CSS/JS marketing website for Bamboo Digital Consultin
 | Page H1 | clamp(32px, 4vw, 56px) | 700 | `--text` | Inter |
 | Section H2 | clamp(28px, 4vw, 48px) | 700 | `--text` | Inter |
 | Card H3 | 20px | 700 | `--text` | Inter |
-| Eyebrow | 11px | 500 | `--chartreuse` | JetBrains Mono |
+| Eyebrow | 11px | 500 | `--pink` | JetBrains Mono |
 | Body | 16px | 400 | `--text-muted` | Inter |
 | Body large | 17–20px | 400 | `--text-muted` | Inter |
 | Caption / label | 13–14px | 500 | varies | Inter |
-| Mono data | 12–14px | 400–500 | `--green` or `--chartreuse` | JetBrains Mono |
+| Mono data | 12–14px | 400–500 | `--purple` or `--pink` | JetBrains Mono |
 
 **Hero title gradient:**
 ```css
-background: linear-gradient(135deg, #F8F8FA 20%, #059669 60%, #6B9E1E 100%);
+background: linear-gradient(135deg, #F8F8FA 20%, #7B2FBE 60%, #E91E8C 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -105,7 +109,7 @@ background-clip: text;
 font-family: var(--font-mono);
 font-size: 11px;
 font-weight: 500;
-color: var(--chartreuse);
+color: var(--pink);
 letter-spacing: 0.15em;
 text-transform: uppercase;
 margin-bottom: 16px;
@@ -173,7 +177,7 @@ website/
 **Logo:** `<img src="../logos/BAMBOO Consulting add-10.png" alt="Bamboo Digital Consulting" height="36">`
 
 **Nav links:** Services · Products · Contact
-**Link style:** 14px, weight 500, color `--text-muted`, hover `--text`, active page = `--chartreuse`
+**Link style:** 14px, weight 500, color `--text-muted`, hover `--text`, active page = `--pink`
 
 **CTA button:** "Book a Call" → `contact.html` — use `.btn--primary` style
 
@@ -214,26 +218,26 @@ website/
 
 /* Primary — gradient fill */
 .btn--primary {
-  background: var(--grad-button);  /* linear-gradient(135deg, #059669, #6B9E1E) */
+  background: var(--grad-button);  /* linear-gradient(135deg, #7B2FBE, #E91E8C) */
   color: #fff;
 }
 .btn--primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
-/* Ghost — transparent with green border */
+/* Ghost — transparent with purple border */
 .btn--ghost {
   background: transparent;
   color: var(--text);
   border: 1px solid var(--border);
 }
-.btn--ghost:hover { border-color: var(--green); }
+.btn--ghost:hover { border-color: var(--purple); }
 
-/* Outline — chartreuse border */
+/* Outline — pink border */
 .btn--outline {
   background: transparent;
-  color: var(--chartreuse);
-  border: 1px solid var(--chartreuse);
+  color: var(--pink);
+  border: 1px solid var(--pink);
 }
-.btn--outline:hover { background: rgba(107, 158, 30, 0.1); }
+.btn--outline:hover { background: rgba(233, 30, 140, 0.1); }
 
 /* Large modifier */
 .btn--lg { font-size: 16px; padding: 16px 32px; }
@@ -344,7 +348,7 @@ A 3px tall, 48px wide, `--grad-accent` gradient bar. Used above section titles o
 ```css
 .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 .feature-list li { font-size: 14px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 10px; }
-.feature-list li::before { content: '→'; color: var(--chartreuse); font-weight: 600; flex-shrink: 0; }
+.feature-list li::before { content: '→'; color: var(--pink); font-weight: 600; flex-shrink: 0; }
 ```
 
 ### 4.9 Domain Pills
@@ -353,7 +357,7 @@ Used in the Nexus Framework section on homepage and services page.
 
 ```html
 <div class="domain-pill">
-  <div class="domain-pill__dot" style="background: #6B9E1E;"></div>
+  <div class="domain-pill__dot" style="background: #E91E8C;"></div>
   <span class="domain-pill__name">D0 · Strategy & Value</span>
   <span class="domain-pill__count">3 artifacts</span>
 </div>
@@ -408,9 +412,9 @@ Use inline SVG for all icons. No external icon library. Stroke-based, 24×24 vie
 #### Section 1: Hero
 
 **Background:** `--bg` with two radial gradient overlays:
-- Top-left: `radial-gradient(ellipse at 20% 60%, rgba(2,44,34,0.9) 0%, transparent 55%)`
-- Top-right: `radial-gradient(ellipse at 80% 40%, rgba(5,150,105,0.12) 0%, transparent 50%)`
-- Plus a subtle `radial-gradient(circle at 75% 20%, rgba(107,158,30,0.07) 0%, transparent 40%)` for depth
+- Top-left: `radial-gradient(ellipse at 20% 60%, rgba(30,10,60,0.9) 0%, transparent 55%)`
+- Top-right: `radial-gradient(ellipse at 80% 40%, rgba(123,47,190,0.12) 0%, transparent 50%)`
+- Plus a subtle `radial-gradient(circle at 75% 20%, rgba(233,30,140,0.07) 0%, transparent 40%)` for depth
 
 **Layout:** Full viewport height (`min-height: 100vh`), centered content, padding-top = `--nav-h`
 
@@ -451,19 +455,19 @@ operationalize trust, not document it.
 **Cards:**
 
 Card 1:
-- Icon bg: `rgba(107, 158, 30, 0.1)` · Icon: warning triangle · Icon color: `--chartreuse`
-- Label: `AI on bad data` (color: `--chartreuse`)
+- Icon bg: `rgba(233, 30, 140, 0.1)` · Icon: warning triangle · Icon color: `--pink`
+- Label: `AI on bad data` (color: `--pink`)
 - Title: `Models you can't trust`
 - Body: `AI models making decisions on unvalidated, undocumented, ungoverned data. The output is only as trustworthy as what goes in.`
 
 Card 2:
-- Icon bg: `rgba(249, 115, 22, 0.1)` · Icon: document · Icon color: `--coral`
-- Label: `Governance as paperwork` (color: `--coral`)
+- Icon bg: `rgba(212, 43, 79, 0.1)` · Icon: document · Icon color: `--crimson`
+- Label: `Governance as paperwork` (color: `--crimson`)
 - Title: `Frameworks that don't run`
 - Body: `Policies exist. Nobody follows them. Governance frameworks are built, presented, and shelved. Six months later, nothing has changed.`
 
 Card 3:
-- Icon bg: `rgba(16, 185, 129, 0.1)` · Icon: eye with slash · Icon color: `--coral`
+- Icon bg: `rgba(255, 77, 106, 0.1)` · Icon: eye with slash · Icon color: `--coral`
 - Label: `AI risk without oversight` (color: `--coral`)
 - Title: `Shadow AI proliferating`
 - Body: `AI projects running outside any review process. No visibility. No accountability. No way to answer your board's questions about AI risk.`
@@ -534,7 +538,7 @@ Card 3:
 .quote-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-subtle);
-  border-top: 2px solid var(--chartreuse);
+  border-top: 2px solid var(--pink);
   border-radius: 10px;
   padding: 28px 32px;
 }
@@ -585,19 +589,19 @@ Card 3:
 **Cards:**
 
 Card 1 — Unified Governance:
-- Icon bg: `rgba(5, 150, 105, 0.15)` · Icon: hexagon · Icon color: `--green`
-- Label: `The Nexus Framework` (color: `--green`)
+- Icon bg: `rgba(123, 47, 190, 0.15)` · Icon: hexagon · Icon color: `--purple`
+- Label: `The Nexus Framework` (color: `--purple`)
 - Title: `Unified Governance`
 - Body: `7 domains. 48+ artifacts. 8 diagnostics. The Nexus Framework is governance built to run — not governance built to sit in a document.`
 
 Card 2 — AI Adoption & Enablement:
-- Icon bg: `rgba(107, 158, 30, 0.1)` · Icon: lightning bolt · Icon color: `--chartreuse`
-- Label: `Workshops + Enablement` (color: `--chartreuse`)
+- Icon bg: `rgba(233, 30, 140, 0.1)` · Icon: lightning bolt · Icon color: `--pink`
+- Label: `Workshops + Enablement` (color: `--pink`)
 - Title: `AI Adoption & Enablement`
 - Body: `Close the gap between AI investment and AI outcomes. Readiness assessments, use case prioritization, and AI literacy programs that change how teams work.`
 
 Card 3 — Custom AI Solutions:
-- Icon bg: `rgba(249, 115, 22, 0.1)` · Icon: gear · Icon color: `--coral`
+- Icon bg: `rgba(255, 77, 106, 0.1)` · Icon: gear · Icon color: `--coral`
 - Label: `Tailored + Custom Build` (color: `--coral`)
 - Title: `Custom AI Solutions`
 - Body: `Tailored Nexus implementations for your industry and context. Or a full custom AI build delivered with trusted engineering partners. BDC provides the trust layer.`
@@ -609,8 +613,8 @@ Card 4 — Transformation:
 - Body: `For senior leaders navigating AI-driven transformation. Roadmaps that connect vision to execution. Governance design that scales with your ambition.`
 
 Card 5 — Products:
-- Icon bg: `rgba(5, 150, 105, 0.1)` · Icon: box/package · Icon color: `--green`
-- Label: `Artifacts + Tools` (color: `--green`)
+- Icon bg: `rgba(139, 92, 246, 0.1)` · Icon: box/package · Icon color: `--soft-purple`
+- Label: `Artifacts + Tools` (color: `--soft-purple`)
 - Title: `Products`
 - Body: `Productized frameworks and AI tools you can deploy today. From the Nexus Artifact Library to Claude Skills built for data and AI practitioners.`
 
@@ -634,19 +638,19 @@ Card 5 — Products:
 
 | Dot Color | Label | Count |
 |-----------|-------|-------|
-| `--d0` #6B9E1E | D0 · Strategy & Value | 3 artifacts |
-| `--d1` #059669 | D1 · Governance Core | 8 artifacts |
+| `--d0` #E91E8C | D0 · Strategy & Value | 3 artifacts |
+| `--d1` #7B2FBE | D1 · Governance Core | 8 artifacts |
 | `--d2` #3B82F6 | D2 · Data Quality | 8 artifacts |
-| `--d3` #10B981 | D3 · AI & ML Governance | 15 artifacts |
-| `--d4` #F97316 | D4 · Regulatory & Compliance | 5 artifacts |
-| `--d5` #059669 | D5 · Architecture & Enablement | 7 artifacts |
+| `--d3` #FF4D6A | D3 · AI & ML Governance | 15 artifacts |
+| `--d4` #D42B4F | D4 · Regulatory & Compliance | 5 artifacts |
+| `--d5` #8B5CF6 | D5 · Architecture & Enablement | 7 artifacts |
 | `--d6` #6B7280 | D6 · Operations & Change | 6 artifacts |
 
 ---
 
 #### Section 6: CTA Banner
 
-**Background:** `linear-gradient(135deg, rgba(2,44,34,0.95), rgba(10,10,10,0.98))`
+**Background:** `linear-gradient(135deg, rgba(30,10,60,0.95), rgba(10,10,10,0.98))`
 **Border-top:** `1px solid var(--border-subtle)`
 **Padding:** 96px 24px
 **Text alignment:** center
@@ -654,7 +658,7 @@ Card 5 — Products:
 Add a radial gradient glow behind the content:
 ```css
 /* Pseudo-element: centered radial glow */
-background: radial-gradient(ellipse, rgba(5,150,105,0.15) 0%, transparent 70%);
+background: radial-gradient(ellipse, rgba(123,47,190,0.15) 0%, transparent 70%);
 ```
 
 **Content:**
@@ -709,9 +713,9 @@ Each capability is a full-width section with alternating `--bg` / `--bg-section`
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase;
   padding: 4px 10px; border-radius: 4px;
-  background: rgba(5,150,105,0.15);
-  color: var(--green);
-  border: 1px solid rgba(5,150,105,0.3);
+  background: rgba(123,47,190,0.15);
+  color: var(--purple);
+  border: 1px solid rgba(123,47,190,0.3);
   display: inline-block; margin-bottom: 20px;
 }
 ```
@@ -866,12 +870,12 @@ Body:
 
 | Domain | Color | Name | Artifacts | 1-line description |
 |--------|-------|------|-----------|-------------------|
-| D0 | #6B9E1E | Strategy & Value | 3 | Business case, ROI measurement, governance charter |
-| D1 | #059669 | Governance Core | 8 | Ownership, decision rights, policy, stewardship, council design |
+| D0 | #E91E8C | Strategy & Value | 3 | Business case, ROI measurement, governance charter |
+| D1 | #7B2FBE | Governance Core | 8 | Ownership, decision rights, policy, stewardship, council design |
 | D2 | #3B82F6 | Data Quality | 8 | Measuring, managing, and improving data quality. Includes MDM strategy |
-| D3 | #10B981 | AI & ML Governance | 15 | Model governance, AI risk, responsible AI, operations, and strategy |
-| D4 | #F97316 | Regulatory & Compliance | 5 | Privacy, classification, regulatory mapping |
-| D5 | #059669 | Architecture & Enablement | 7 | Data mesh governance, data products, findable and trustworthy data |
+| D3 | #FF4D6A | AI & ML Governance | 15 | Model governance, AI risk, responsible AI, operations, and strategy |
+| D4 | #D42B4F | Regulatory & Compliance | 5 | Privacy, classification, regulatory mapping |
+| D5 | #8B5CF6 | Architecture & Enablement | 7 | Data mesh governance, data products, findable and trustworthy data |
 | D6 | #6B7280 | Operations & Change | 6 | Deployment, adoption, and ongoing governance sustainability |
 
 **Domain card content:**
@@ -968,8 +972,8 @@ CTA: `[btn--ghost] Download Free →`
 Card style: `.product-card--pro` — distinct from free card:
 ```css
 .product-card--pro {
-  background: linear-gradient(135deg, rgba(2,44,34,0.8), rgba(10,10,10,0.95));
-  border: 1px solid rgba(107,158,30,0.3);
+  background: linear-gradient(135deg, rgba(30,10,60,0.8), rgba(10,10,10,0.95));
+  border: 1px solid rgba(233,30,140,0.3);
   border-radius: 16px;
   padding: 40px;
   position: relative;
@@ -984,12 +988,12 @@ Card style: `.product-card--pro` — distinct from free card:
 }
 ```
 
-Badge: `Pro` (style: chartreuse tones)
+Badge: `Pro` (style: pink tones)
 ```css
 .product-badge--pro {
-  background: rgba(107,158,30,0.15);
-  color: var(--chartreuse);
-  border: 1px solid rgba(107,158,30,0.3);
+  background: rgba(233,30,140,0.15);
+  color: var(--pink);
+  border: 1px solid rgba(233,30,140,0.3);
 }
 ```
 
@@ -1143,7 +1147,7 @@ Available Tuesday & Thursday mornings (Hawaii Time).
 [Body — 14px, --text-muted]
 Prefer email?
 
-[Link — chartreuse, 16px]
+[Link — pink, 16px]
 adam@bdcllc.io
 ```
 
@@ -1345,5 +1349,5 @@ All pages include:
 6. **No external JS libraries.** No jQuery, no Lodash, no Alpine, no HTMX. Vanilla JS only.
 7. **No placeholder copy.** Every `Lorem ipsum` is a bug. All copy is specified in this document — use it verbatim. Exception: the 3 social proof quote cards are intentionally left as `<!-- TODO -->` comments for Adam to fill in.
 8. **Logo is always `add-10.png`** on dark backgrounds (all pages use dark backgrounds). Never swap the logo.
-9. **WCAG 4.5:1 minimum contrast on all text.** Priority checks: `--text-muted` (#9CA3AF) over `--bg-card` (#0A1A12), chartreuse/coral eyebrow labels over `--bg-section` (#060F0B), and gradient text at small sizes. Fail = fix before shipping.
+9. **WCAG 4.5:1 minimum contrast on all text.** Priority checks: `--text-muted` (#9CA3AF) over `--bg-card` (#111128), pink/crimson eyebrow labels over `--bg-section` (#0F0F1A), and gradient text at small sizes. Fail = fix before shipping.
 10. **No audience narrowing.** BDC serves any client interested in data and AI — individuals, small teams, mid-market, enterprise, any role or title. Do not add "For CDOs," "For Enterprise," or role-gated language anywhere in the copy or navigation.

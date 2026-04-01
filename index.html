@@ -45,42 +45,44 @@
         <div class="hero-glow"></div>
 
         <!-- Research Ticker (pinned below fixed nav, cycles between papers) -->
-        <div id="research-ticker" style="
-            position: fixed; top: 88px; left: 0; right: 0; z-index: 99;
-            background: linear-gradient(90deg, rgba(5, 150, 105, 0.12) 0%, rgba(107, 158, 30, 0.06) 100%);
-            border-bottom: 1px solid rgba(5, 150, 105, 0.2);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            overflow: hidden;
-        ">
-            <a class="ticker-item ticker-active" href="research/2026-04-01-double-gap.pdf" target="_blank" style="
+        <style>
+            #research-ticker {
+                position: fixed; top: 88px; left: 0; right: 0; z-index: 99;
+                background: linear-gradient(90deg, rgba(5, 150, 105, 0.12) 0%, rgba(107, 158, 30, 0.06) 100%);
+                border-bottom: 1px solid rgba(5, 150, 105, 0.2);
+                backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                overflow: hidden; height: 36px;
+            }
+            .ticker-item {
                 display: flex; align-items: center; justify-content: center; gap: 12px;
                 padding: 8px 24px; max-width: 1200px; margin: 0 auto;
                 text-decoration: none; font-family: var(--font);
-                transition: opacity 0.5s ease;
-            ">
-                <span style="
-                    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-                    letter-spacing: 1.5px; text-transform: uppercase;
-                    color: #0A0A0A; background: var(--green);
-                    padding: 2px 8px; border-radius: 3px; white-space: nowrap;
-                ">New Research</span>
+                position: absolute; left: 0; right: 0;
+                transform: translateY(100%); opacity: 0;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            }
+            .ticker-item.ticker-active {
+                transform: translateY(0); opacity: 1;
+            }
+            .ticker-item.ticker-exit {
+                transform: translateY(-100%); opacity: 0;
+            }
+            .ticker-badge {
+                font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+                letter-spacing: 1.5px; text-transform: uppercase;
+                color: #0A0A0A; padding: 2px 8px; border-radius: 3px; white-space: nowrap;
+            }
+        </style>
+        <div id="research-ticker">
+            <a class="ticker-item ticker-active" href="research/2026-04-01-double-gap.pdf" target="_blank">
+                <span class="ticker-badge" style="background: var(--green);">New Research</span>
                 <span style="font-size: 13px; color: var(--text-muted);">
                     The Double Gap: Why AI compliance is failing from both sides
                 </span>
                 <span style="font-size: 13px; color: var(--green);">&rarr;</span>
             </a>
-            <a class="ticker-item" href="research/2026-03-31-ai-spend-inversion.pdf" target="_blank" style="
-                display: none; align-items: center; justify-content: center; gap: 12px;
-                padding: 8px 24px; max-width: 1200px; margin: 0 auto;
-                text-decoration: none; font-family: var(--font);
-                transition: opacity 0.5s ease;
-            ">
-                <span style="
-                    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-                    letter-spacing: 1.5px; text-transform: uppercase;
-                    color: #0A0A0A; background: var(--chartreuse);
-                    padding: 2px 8px; border-radius: 3px; white-space: nowrap;
-                ">Research</span>
+            <a class="ticker-item" href="research/2026-03-31-ai-spend-inversion.pdf" target="_blank">
+                <span class="ticker-badge" style="background: var(--chartreuse);">Research</span>
                 <span style="font-size: 13px; color: var(--text-muted);">
                     Your AI Budget Is Upside Down: Why governance predicts AI value better than AI spending
                 </span>
@@ -93,10 +95,18 @@
             if (items.length < 2) return;
             var idx = 0;
             setInterval(function(){
-                items[idx].style.display = 'none';
+                var current = items[idx];
+                current.classList.remove('ticker-active');
+                current.classList.add('ticker-exit');
                 idx = (idx + 1) % items.length;
-                items[idx].style.display = 'flex';
-            }, 6000);
+                var next = items[idx];
+                next.classList.remove('ticker-exit');
+                // Force reflow so the enter transition plays
+                void next.offsetWidth;
+                next.classList.add('ticker-active');
+                // Clean up exit class after transition
+                setTimeout(function(){ current.classList.remove('ticker-exit'); }, 450);
+            }, 4000);
         })();
         </script>
 

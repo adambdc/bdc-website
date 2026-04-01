@@ -621,7 +621,7 @@
         var dimNames   = { adopt: 'Adopt', govern: 'Govern', orchestrate: 'Orchestrate', adapt: 'Adapt' };
         var dimClasses = { adopt: 'dim-adopt', govern: 'dim-govern', orchestrate: 'dim-orchestrate', adapt: 'dim-adapt' };
         var dimLabels  = { adopt: 'TEMPO: Adopt', govern: 'TEMPO: Govern', orchestrate: 'TEMPO: Orchestrate', adapt: 'TEMPO: Adapt' };
-        var dimColors  = { adopt: '#E91E8C', govern: '#7B2FBE', orchestrate: '#FF4D6A', adapt: '#3B82F6' };
+        var dimColors  = { adopt: '#6B9E1E', govern: '#059669', orchestrate: '#10B981', adapt: '#3B82F6' };
 
         var stageDescs = {
             metronome: 'Your organization is in the earliest stage of AI and data trust maturity. Governance is ad hoc, AI usage is largely ungoverned, and foundational structures are missing. The priority is establishing visibility: know what exists, identify what is ungoverned, and build the baseline.',
@@ -822,9 +822,9 @@
                 m === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
             }
             ctx.closePath();
-            ctx.fillStyle   = 'rgba(123,47,190,0.15)';
+            ctx.fillStyle   = 'rgba(5,150,105,0.15)';
             ctx.fill();
-            ctx.strokeStyle = '#7B2FBE';
+            ctx.strokeStyle = '#059669';
             ctx.lineWidth   = 2;
             ctx.stroke();
 

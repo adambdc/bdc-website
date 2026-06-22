@@ -2,3 +2,9 @@
 .netlify/
 _drafts/
 .DS_Store
+
+# Confidential internal specs — never publish (2026-06-22 security remediation).
+# These shipped to the public repo by accident; keep them out for good.
+*Spec*.md
+*SPEC*.md
+MATURITY-ASSESSMENT-SPEC*.md

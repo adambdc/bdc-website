@@ -25,7 +25,7 @@ TEMPO (Trust-Engineered Model for Production Operations) is BDC's proprietary AI
 | `assessment-preview.html` | Assessment preview/landing |
 | `calculator.html` | ROI / value calculator |
 | `insights.html` | Research and insights index |
-| `explainers/catalog.json` | Source of truth for explainer promotion, visibility, and status |
+| `explainers/catalog.json` | Public-only export of promoted explainer metadata |
 | `explainers/index.html` | Generated public explainer catalog |
 | `contact.html` | Book a call / contact form |
 | `privacy.html` | Privacy policy |
@@ -35,7 +35,7 @@ Research assets in `research/` are published PDFs (double-gap analysis, AI spend
 
 ## Explainer catalog
 
-Edit `explainers/catalog.json`, then run `node scripts/render-explainer-catalog.mjs`. The renderer enforces the visibility contract: only promoted entries with `visibility: public` can appear on the public hub or in the sitemap. `internal`, `restricted`, and `public_review` entries are never rendered there. Use `node scripts/render-explainer-catalog.mjs --check` in validation to detect stale generated files.
+Edit `explainers/catalog.json`, then run `node scripts/render-explainer-catalog.mjs`. This public deployment accepts only entries with `visibility: public`; metadata and files for `internal`, `restricted`, and `public_review` items belong outside this repository. Use `node scripts/render-explainer-catalog.mjs --check` in validation to detect stale generated files.
 
 ## Deployment
 

@@ -9,7 +9,6 @@ const catalogPath = resolve(root, "explainers/catalog.json");
 const landingPath = resolve(root, "explainers/index.html");
 const sitemapPath = resolve(root, "sitemap.xml");
 const checkOnly = process.argv.includes("--check");
-const allowedVisibility = new Set(["internal", "restricted", "public_review", "public"]);
 
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
@@ -36,7 +35,9 @@ for (const entry of source.entries) {
   }
   if (ids.has(entry.id)) throw new Error(`Duplicate explainer id: ${entry.id}`);
   ids.add(entry.id);
-  if (!allowedVisibility.has(entry.visibility)) throw new Error(`${entry.id}: invalid visibility`);
+  if (entry.visibility !== "public") {
+    throw new Error(`${entry.id}: non-public metadata must not be stored in the public website repository`);
+  }
   if (typeof entry.promoted !== "boolean") throw new Error(`${entry.id}: promoted must be boolean`);
   if (!Array.isArray(entry.topics) || !entry.topics.every((topic) => typeof topic === "string" && topic.trim())) {
     throw new Error(`${entry.id}: topics must be an array of non-empty strings`);

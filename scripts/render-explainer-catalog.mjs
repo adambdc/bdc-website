@@ -10,7 +10,6 @@ const landingPath = resolve(root, "explainers/index.html");
 const sitemapPath = resolve(root, "sitemap.xml");
 const checkOnly = process.argv.includes("--check");
 const allowedVisibility = new Set(["internal", "restricted", "public_review", "public"]);
-const publicCatalogVisibility = new Set(["restricted", "public"]);
 
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
@@ -45,10 +44,9 @@ for (const entry of source.entries) {
   if (entry.href !== `/explainers/${entry.slug}/`) throw new Error(`${entry.id}: href must match slug`);
 }
 
-// Safety invariant: Internal and Public review items are never listed on the public hub.
-const promoted = source.entries.filter((entry) => entry.promoted && publicCatalogVisibility.has(entry.visibility));
+// Safety invariant: only Public items may appear on the public hub. Promotion never overrides visibility.
+const promoted = source.entries.filter((entry) => entry.promoted && entry.visibility === "public");
 const publicEntries = source.entries.filter((entry) => entry.visibility === "public");
-const restrictedEntries = promoted.filter((entry) => entry.visibility === "restricted");
 
 const visibilityLabel = {
   restricted: "Restricted",
@@ -130,8 +128,8 @@ const landing = `<!doctype html>
             <span class="catalog-summary__label">Promoted</span>
           </div>
           <div class="catalog-summary__item">
-            <span class="catalog-summary__number">${restrictedEntries.length}</span>
-            <span class="catalog-summary__label">Partner access</span>
+            <span class="catalog-summary__number">${publicEntries.length}</span>
+            <span class="catalog-summary__label">Public</span>
           </div>
         </div>
       </div>
@@ -144,7 +142,7 @@ const landing = `<!doctype html>
             <p class="section-eyebrow">Promoted now</p>
             <h2 id="catalog-heading">Explore the current catalog.</h2>
           </div>
-          <p class="catalog-header__note">Every listing shows its current release state. Restricted explainers require an approved identity before any explainer content is served.</p>
+          <p class="catalog-header__note">Only explainers whose visibility is explicitly set to Public can appear here. Restricted previews remain entirely behind authentication.</p>
         </div>
         <div class="explainer-grid">
 ${cards}
@@ -167,12 +165,12 @@ ${cards}
             <h3>Internal</h3>
             <p>Not published externally.</p>
           </article>
-          <article class="visibility-card visibility-card--active">
-            <span class="visibility-card__marker">May be promoted</span>
+          <article class="visibility-card">
+            <span class="visibility-card__marker">Authenticated only</span>
             <h3>Restricted</h3>
             <p>Authenticated preview for BDC or named clients.</p>
           </article>
-          <article class="visibility-card">
+          <article class="visibility-card visibility-card--active">
             <span class="visibility-card__marker">Never listed</span>
             <h3>Public review</h3>
             <p>Unlisted and noindex, only for material already cleared for public exposure.</p>

@@ -41,12 +41,12 @@
         </div>
         <div class="catalog-summary" aria-label="Explainer catalog summary">
           <div class="catalog-summary__item">
-            <span class="catalog-summary__number">1</span>
+            <span class="catalog-summary__number">0</span>
             <span class="catalog-summary__label">Promoted</span>
           </div>
           <div class="catalog-summary__item">
-            <span class="catalog-summary__number">1</span>
-            <span class="catalog-summary__label">Partner access</span>
+            <span class="catalog-summary__number">0</span>
+            <span class="catalog-summary__label">Public</span>
           </div>
         </div>
       </div>
@@ -59,30 +59,10 @@
             <p class="section-eyebrow">Promoted now</p>
             <h2 id="catalog-heading">Explore the current catalog.</h2>
           </div>
-          <p class="catalog-header__note">Every listing shows its current release state. Restricted explainers require an approved identity before any explainer content is served.</p>
+          <p class="catalog-header__note">Only explainers whose visibility is explicitly set to Public can appear here. Restricted previews remain entirely behind authentication.</p>
         </div>
         <div class="explainer-grid">
-        <article class="explainer-card explainer-card--restricted">
-          <div class="explainer-card__topline">
-            <span class="status-pill">Restricted</span>
-            <span class="explainer-card__state">Partner preview</span>
-          </div>
-          <h3>Captain’s Chair</h3>
-          <p class="explainer-card__summary">An interactive operating-model explainer for seeing how leadership intent, governed decisions, evidence, and execution stay connected.</p>
-          <ul class="explainer-card__topics" aria-label="Topics">
-                <li>AI operating model</li>
-                <li>Governance</li>
-                <li>Evidence</li>
-          </ul>
-          <div class="explainer-card__meta">
-            <span>Updated 2026-07-15</span>
-            <span>BDC partners and named reviewers</span>
-          </div>
-          <div class="explainer-card__footer">
-            <p class="explainer-card__access-note">Authentication is required. Access is limited to BDC and named partners.</p>
-            <a class="btn btn--primary" href="/explainers/captains-chair/">Partner sign-in &rarr;</a>
-          </div>
-        </article>
+        <div class="explainer-card"><h3>No promoted explainers yet</h3><p>New explainers will appear here when their promotion and visibility metadata allow listing.</p></div>
         </div>
       </div>
     </section>
@@ -102,12 +82,12 @@
             <h3>Internal</h3>
             <p>Not published externally.</p>
           </article>
-          <article class="visibility-card visibility-card--active">
-            <span class="visibility-card__marker">May be promoted</span>
+          <article class="visibility-card">
+            <span class="visibility-card__marker">Authenticated only</span>
             <h3>Restricted</h3>
             <p>Authenticated preview for BDC or named clients.</p>
           </article>
-          <article class="visibility-card">
+          <article class="visibility-card visibility-card--active">
             <span class="visibility-card__marker">Never listed</span>
             <h3>Public review</h3>
             <p>Unlisted and noindex, only for material already cleared for public exposure.</p>

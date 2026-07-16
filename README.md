@@ -35,7 +35,7 @@ Research assets in `research/` are published PDFs (double-gap analysis, AI spend
 
 ## Explainer catalog
 
-Edit `explainers/catalog.json`, then run `node scripts/render-explainer-catalog.mjs`. The renderer enforces the visibility contract: `internal` and `public_review` entries cannot appear on the public hub; promoted `restricted` entries may be listed with partner sign-in; only `public` entries are added to the sitemap. Use `node scripts/render-explainer-catalog.mjs --check` in validation to detect stale generated files.
+Edit `explainers/catalog.json`, then run `node scripts/render-explainer-catalog.mjs`. The renderer enforces the visibility contract: only promoted entries with `visibility: public` can appear on the public hub or in the sitemap. `internal`, `restricted`, and `public_review` entries are never rendered there. Use `node scripts/render-explainer-catalog.mjs --check` in validation to detect stale generated files.
 
 ## Deployment
 

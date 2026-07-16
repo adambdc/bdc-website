@@ -3,3 +3,7 @@
 
 /research/*
   Cache-Control: public, max-age=3600, must-revalidate
+
+/explainers/captains-chair*
+  Cache-Control: private, no-store
+  X-Robots-Tag: noindex, nofollow, noarchive

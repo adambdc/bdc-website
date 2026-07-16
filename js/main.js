@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.addEventListener('click', () => {
       navLinks.classList.toggle('nav__links--open');
       toggle.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', navLinks.classList.contains('nav__links--open') ? 'true' : 'false');
     });
     
     // Close on link click
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
       link.addEventListener('click', () => {
         navLinks.classList.remove('nav__links--open');
         toggle.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
       });
     });
   }
@@ -39,7 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
                   // Mobile nav close
                   if (navLinks && navLinks.classList.contains('nav__links--open')) {
                       navLinks.classList.remove('nav__links--open');
-                      if (toggle) toggle.classList.remove('is-open');
+                      if (toggle) {
+                          toggle.classList.remove('is-open');
+                          toggle.setAttribute('aria-expanded', 'false');
+                      }
                   }
 
                   const offset = 88; // Nav height

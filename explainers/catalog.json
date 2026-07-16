@@ -1,0 +1,24 @@
+{
+  "schema_version": "bdc/explainer-catalog/v1",
+  "updated_at": "2026-07-15",
+  "entries": [
+    {
+      "id": "exp_captainschair01",
+      "slug": "captains-chair",
+      "title": "Captain’s Chair",
+      "summary": "An interactive operating-model explainer for seeing how leadership intent, governed decisions, evidence, and execution stay connected.",
+      "href": "/explainers/captains-chair/",
+      "visibility": "restricted",
+      "status": "partner_preview",
+      "status_label": "Partner preview",
+      "promoted": true,
+      "updated": "2026-07-15",
+      "audience": "BDC partners and named reviewers",
+      "topics": [
+        "AI operating model",
+        "Governance",
+        "Evidence"
+      ]
+    }
+  ]
+}

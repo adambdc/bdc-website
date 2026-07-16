@@ -1,4 +1,89 @@
-<!doctype html>
+#!/usr/bin/env node
+
+import { readFile, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const catalogPath = resolve(root, "explainers/catalog.json");
+const landingPath = resolve(root, "explainers/index.html");
+const sitemapPath = resolve(root, "sitemap.xml");
+const checkOnly = process.argv.includes("--check");
+const allowedVisibility = new Set(["internal", "restricted", "public_review", "public"]);
+const publicCatalogVisibility = new Set(["restricted", "public"]);
+
+const escapeHtml = (value) => String(value)
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;")
+  .replaceAll("'", "&#039;");
+
+const requiredString = (entry, field) => {
+  if (typeof entry[field] !== "string" || !entry[field].trim()) {
+    throw new Error(`${entry.id || "catalog entry"}: ${field} must be a non-empty string`);
+  }
+};
+
+const source = JSON.parse(await readFile(catalogPath, "utf8"));
+if (source.schema_version !== "bdc/explainer-catalog/v1" || !Array.isArray(source.entries)) {
+  throw new Error("Unsupported or malformed explainer catalog");
+}
+
+const ids = new Set();
+for (const entry of source.entries) {
+  for (const field of ["id", "slug", "title", "summary", "href", "visibility", "status", "status_label", "updated", "audience"]) {
+    requiredString(entry, field);
+  }
+  if (ids.has(entry.id)) throw new Error(`Duplicate explainer id: ${entry.id}`);
+  ids.add(entry.id);
+  if (!allowedVisibility.has(entry.visibility)) throw new Error(`${entry.id}: invalid visibility`);
+  if (typeof entry.promoted !== "boolean") throw new Error(`${entry.id}: promoted must be boolean`);
+  if (!Array.isArray(entry.topics) || !entry.topics.every((topic) => typeof topic === "string" && topic.trim())) {
+    throw new Error(`${entry.id}: topics must be an array of non-empty strings`);
+  }
+  if (entry.href !== `/explainers/${entry.slug}/`) throw new Error(`${entry.id}: href must match slug`);
+}
+
+// Safety invariant: Internal and Public review items are never listed on the public hub.
+const promoted = source.entries.filter((entry) => entry.promoted && publicCatalogVisibility.has(entry.visibility));
+const publicEntries = source.entries.filter((entry) => entry.visibility === "public");
+const restrictedEntries = promoted.filter((entry) => entry.visibility === "restricted");
+
+const visibilityLabel = {
+  restricted: "Restricted",
+  public: "Public"
+};
+
+function renderCard(entry) {
+  const restricted = entry.visibility === "restricted";
+  const topics = entry.topics.map((topic) => `<li>${escapeHtml(topic)}</li>`).join("\n                ");
+  return `        <article class="explainer-card explainer-card--${escapeHtml(entry.visibility)}">
+          <div class="explainer-card__topline">
+            <span class="status-pill">${escapeHtml(visibilityLabel[entry.visibility])}</span>
+            <span class="explainer-card__state">${escapeHtml(entry.status_label)}</span>
+          </div>
+          <h3>${escapeHtml(entry.title)}</h3>
+          <p class="explainer-card__summary">${escapeHtml(entry.summary)}</p>
+          <ul class="explainer-card__topics" aria-label="Topics">
+                ${topics}
+          </ul>
+          <div class="explainer-card__meta">
+            <span>Updated ${escapeHtml(entry.updated)}</span>
+            <span>${escapeHtml(entry.audience)}</span>
+          </div>
+          <div class="explainer-card__footer">
+            <p class="explainer-card__access-note">${restricted ? "Authentication is required. Access is limited to BDC and named partners." : "Available without sign-in and cleared for public discovery."}</p>
+            <a class="btn btn--primary" href="${escapeHtml(entry.href)}">${restricted ? "Partner sign-in" : "Open explainer"} &rarr;</a>
+          </div>
+        </article>`;
+}
+
+const cards = promoted.length
+  ? promoted.map(renderCard).join("\n")
+  : `        <div class="explainer-card"><h3>No promoted explainers yet</h3><p>New explainers will appear here when their promotion and visibility metadata allow listing.</p></div>`;
+
+const landing = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -41,11 +126,11 @@
         </div>
         <div class="catalog-summary" aria-label="Explainer catalog summary">
           <div class="catalog-summary__item">
-            <span class="catalog-summary__number">1</span>
+            <span class="catalog-summary__number">${promoted.length}</span>
             <span class="catalog-summary__label">Promoted</span>
           </div>
           <div class="catalog-summary__item">
-            <span class="catalog-summary__number">1</span>
+            <span class="catalog-summary__number">${restrictedEntries.length}</span>
             <span class="catalog-summary__label">Partner access</span>
           </div>
         </div>
@@ -62,27 +147,7 @@
           <p class="catalog-header__note">Every listing shows its current release state. Restricted explainers require an approved identity before any explainer content is served.</p>
         </div>
         <div class="explainer-grid">
-        <article class="explainer-card explainer-card--restricted">
-          <div class="explainer-card__topline">
-            <span class="status-pill">Restricted</span>
-            <span class="explainer-card__state">Partner preview</span>
-          </div>
-          <h3>Captain’s Chair</h3>
-          <p class="explainer-card__summary">An interactive operating-model explainer for seeing how leadership intent, governed decisions, evidence, and execution stay connected.</p>
-          <ul class="explainer-card__topics" aria-label="Topics">
-                <li>AI operating model</li>
-                <li>Governance</li>
-                <li>Evidence</li>
-          </ul>
-          <div class="explainer-card__meta">
-            <span>Updated 2026-07-15</span>
-            <span>BDC partners and named reviewers</span>
-          </div>
-          <div class="explainer-card__footer">
-            <p class="explainer-card__access-note">Authentication is required. Access is limited to BDC and named partners.</p>
-            <a class="btn btn--primary" href="/explainers/captains-chair/">Partner sign-in &rarr;</a>
-          </div>
-        </article>
+${cards}
         </div>
       </div>
     </section>
@@ -156,3 +221,25 @@
   <script src="../js/main.js"></script>
 </body>
 </html>
+`;
+
+const publicUrls = publicEntries.map((entry) => `  <url><loc>https://bdcllc.io${escapeHtml(entry.href)}</loc></url>`).join("\n");
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://bdcllc.io/</loc></url>
+  <url><loc>https://bdcllc.io/explainers/</loc></url>${publicUrls ? `\n${publicUrls}` : ""}
+</urlset>
+`;
+
+async function writeOrCheck(path, content) {
+  if (!checkOnly) {
+    await writeFile(path, content, "utf8");
+    return;
+  }
+  const current = await readFile(path, "utf8");
+  if (current !== content) throw new Error(`${path} is stale; run the catalog renderer`);
+}
+
+await writeOrCheck(landingPath, landing);
+await writeOrCheck(sitemapPath, sitemap);
+console.log(`${checkOnly ? "Verified" : "Rendered"} ${promoted.length} promoted explainer(s); ${publicEntries.length} public sitemap entr${publicEntries.length === 1 ? "y" : "ies"}.`);
